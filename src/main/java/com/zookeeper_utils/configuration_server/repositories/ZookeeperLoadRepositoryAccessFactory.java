@@ -1,4 +1,4 @@
-package com.zookeeper_utils.configuration_server.properties;
+package com.zookeeper_utils.configuration_server.repositories;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -7,9 +7,8 @@ import java.util.Properties;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
-import javax.inject.Inject;
 
-import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepository;
+import com.zookeeper_utils.configuration_server.properties.ZookeeperConfigProperties;
 
 
 
@@ -23,25 +22,25 @@ import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepository
  *
  */
 @ApplicationScoped
-public class ZookeeperConfigurationUtilsFactory implements Serializable{
+public class ZookeeperLoadRepositoryAccessFactory implements Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@Inject
-	private ZookeeperRepository zc;
+
 	@Produces
-	public ZookeeperConfigProperties produce(InjectionPoint injectionPoint) throws IOException{
+	public ZookeeperRepository produce(InjectionPoint injectionPoint) throws IOException{
 		return build();
 	}
-	
-	public ZookeeperConfigProperties build() throws IOException{
+	public ZookeeperRepository build() throws IOException{
 		String fileName = "zookeeper.properties";
 		Properties properties = new Properties();
-		properties.load(ZookeeperConfigProperties.class.getClassLoader().getResourceAsStream(fileName));
-		String contextName = properties.getProperty("application.context.name");
-		return new ZookeeperConfigProperties(zc, contextName);
+		properties.load(ZookeeperRepository.class.getClassLoader().getResourceAsStream(fileName));
+		String host = properties.getProperty("zookeeper.host");
+		String port = properties.getProperty("zookeeper.port");
+		ZookeeperRepository zc = new ZookeeperRepository(host, port);
+		return zc;
 	}
 
 

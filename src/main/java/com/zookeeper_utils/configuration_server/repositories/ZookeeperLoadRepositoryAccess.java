@@ -1,4 +1,4 @@
-package com.zookeeper_utils.configuration_server.properties;
+package com.zookeeper_utils.configuration_server.repositories;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
-public @interface ZookeeperLoadConfiguration {
+public @interface ZookeeperLoadRepositoryAccess {
 	/**
 	 * Nome do arquivo de mensagem.
 	 * <p>Este valor é obrigatório.

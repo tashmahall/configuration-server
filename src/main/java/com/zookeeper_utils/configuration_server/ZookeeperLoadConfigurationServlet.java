@@ -1,33 +1,45 @@
 package com.zookeeper_utils.configuration_server;
 
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpServlet;
 
 import com.zookeeper_utils.configuration_server.properties.ZookeeperConfigProperties;
-import com.zookeeper_utils.configuration_server.properties.ZookeeperLoadConfiguration;
 
-public class ZookeeperLoadConfigurationServlet extends HttpServlet {
+public class ZookeeperLoadConfigurationServlet extends HttpServlet implements ServletContextListener {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	@Inject
+	private ZookeeperConfigProperties zookeeperConfigProperties;
 	
-	@Inject
-	@ZookeeperLoadConfiguration(value="zookeeper.properties")
-	private ZookeeperConfigProperties zookeeperProperties;
-	@Inject
-	private ServletContext context;
+	
+//	@Override
+//	public void init() throws ServletException {
+//		try {
+//			zookeeperProperties.getConfigurationTree("/showcase-rest");
+//			System.out.println(context.getContextPath());
+//		} catch (Exception e) {
+//			throw new ServletException(e.getMessage(),e);
+//		}
+//	}
+
 	@Override
-	public void init() throws ServletException {
-		super.init();
+	public void contextInitialized(ServletContextEvent sce) {
 		try {
-			zookeeperProperties.getConfigurationTree(context.getServletContextName());
+			zookeeperConfigProperties.getConfigurationTree();
 		} catch (Exception e) {
-			throw new ServletException(e.getMessage(),e);
+			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void contextDestroyed(ServletContextEvent sce) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 
