@@ -1,70 +1,53 @@
 package com.zookeeper_utils.configuration_server.repositories;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
 import javax.validation.constraints.NotNull;
 
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
-import org.apache.curator.x.async.AsyncCuratorFramework;
 import org.apache.log4j.Logger;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
-import com.zookeeper_utils.configuration_server.watchers.ConfigurationEventWatcher;
-import com.zookeeper_utils.configuration_server.watchers.ConfigurationTreeWatcher;
 
-public class ZookeeperRepository implements Serializable {
-	/**
-	 * 
-	 */
-	public static final String CONFIGURATION_TREE = "configurationTree";
-	private static final long serialVersionUID = 1L;
+public class ZookeeperWithoutWatcher implements ZookeeperRepositoryInterface {
+
 	private final Logger log = Logger.getLogger(this.getClass());
-	
+
+	@Inject
+	private ServletContext context;	
 	private CuratorFramework clientZookeeper;
-	private AsyncCuratorFramework async;
-	
-    public ZookeeperRepository (@NotNull String host,@NotNull String port) {
+	public ZookeeperWithoutWatcher (@NotNull String host,@NotNull String port) {
     	org.apache.log4j.BasicConfigurator.configure();
     	RetryPolicy retryPolicy = new RetryNTimes(0, 60000);
     	clientZookeeper = CuratorFrameworkFactory.newClient(host+":"+port, retryPolicy);
-    	async = AsyncCuratorFramework.wrap(clientZookeeper);
     	clientZookeeper.start(); 
-   		
-    }
-	public String getConfigurationValueUnwatchedWay(@NotNull String key) throws ConfigPropertiesException  {
+	}
+	public String getValueFromKeyPath(@NotNull String keyPath) throws ConfigPropertiesException  {
+		String realKeyPath ="/"+context.getServletContextName()+keyPath;
 		String value;
 		try {
-			value = new String (this.clientZookeeper.getData().forPath(key));
-			log.debug("Key Path ["+key+"] - Configuration Data ["+new String(this.clientZookeeper.getData().forPath(key))+"]");
+			value = new String (this.clientZookeeper.getData().forPath(realKeyPath));
+			log.debug("Key Path ["+keyPath+"] - Configuration Data ["+new String(this.clientZookeeper.getData().forPath(keyPath))+"]");
 			return value;
 		} catch (Exception e) {
-			throw new ConfigPropertiesException("Erro ao tentar carregar a propriedade com 'keyPath' ["+key+"]");
+			throw new ConfigPropertiesException("Erro ao tentar carregar a propriedade com 'keyPath' ["+keyPath+"]",e);
 		}
-
 	}
-
-	public Map<String,String> getNewConfigurationMap(@NotNull String... keys) throws Exception {
-		Map<String,String> configurationMap = new TreeMap<String,String>();
-		for(String key: keys) {
-			configurationMap.put(key, new String (this.clientZookeeper.getData().forPath(key)));
-			log.debug("Key Path ["+key+"] - Configuration Data ["+new String(this.clientZookeeper.getData().forPath(key))+"]");
-			this.async.watched().checkExists().forPath(key).event().thenAccept(new ConfigurationEventWatcher(this.clientZookeeper,configurationMap));
-		}
-		return configurationMap;
-	}
-	public Map<String,String> getConfigurationTree(@NotNull String contextName) throws ConfigPropertiesException{
+	public Map<String,String> getKeyPathTree() throws ConfigPropertiesException{
+		String realcontextName ="/"+context.getServletContextName();
 		Map<String,String> configurationMap = new TreeMap<String, String>();
-		this.treeGenerator(contextName, configurationMap);
+		this.treeGenerator(realcontextName, configurationMap);
 		return configurationMap;
 	}
+	
 	private void treeGenerator(String context, Map<String, String> configurationMap) throws ConfigPropertiesException {
-		
 		try {
 			List<String> list = this.clientZookeeper.getChildren().forPath(context);
 			for(String child:list) {
@@ -80,7 +63,6 @@ public class ZookeeperRepository implements Serializable {
 		} catch (Exception e1) {
 			throw new ConfigPropertiesException(e1.getMessage(),e1);
 		}
-
 	}
 	private void defineWatcher(String context, Map<String, String> configurationMap, String newCtx) throws ConfigPropertiesException {
 			try {
@@ -91,12 +73,8 @@ public class ZookeeperRepository implements Serializable {
 				}else {
 					configurationMap.put(newCtx,null);
 				}
-				this.async.watched().checkExists().forPath(context).event().thenAccept(new ConfigurationEventWatcher(this.clientZookeeper,configurationMap));
-				this.async.watched().getChildren().forPath(context).event().thenAccept(new ConfigurationTreeWatcher(this.clientZookeeper,configurationMap));
 			} catch (Exception e) {
 				throw new ConfigPropertiesException("Erro ao definir o valor da propriedade para o 'keyPath' ["+newCtx+"]",e);
 			} 
 	}
 }
-
-

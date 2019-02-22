@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.lalyos.jfiglet.FigletFont;
 import com.zookeeper_utils.configuration_server.properties.ConfigProperties;
 import com.zookeeper_utils.configuration_server.properties.ZookeeperConfigProperties;
+import com.zookeeper_utils.configuration_server.repositories.SanitizeKeyPath;
 import com.zookeeper_utils.configuration_server.utils.JackJsonUtils;
 
 
@@ -42,8 +43,14 @@ public class ZookeeperController implements Serializable{
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getKeys() throws Exception {
 		log.debug(FigletFont.convertOneLine("Test Working "+ teste));
+		test("teste");
 		return getConfigurationTree();
 	}
+	@Inject
+	private void test( @SanitizeKeyPath String teste) {
+		
+	}
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getParametersTree() throws Exception {
