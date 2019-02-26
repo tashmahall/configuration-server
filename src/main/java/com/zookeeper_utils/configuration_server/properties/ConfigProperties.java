@@ -10,6 +10,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import javax.enterprise.util.Nonbinding;
+import javax.inject.Qualifier;
 
 /**
  * Declara informações do arquivo {@code .properties} 
@@ -23,6 +24,7 @@ import javax.enterprise.util.Nonbinding;
  * @author igor.ferreira
  * 
  */
+@Qualifier
 @Documented
 @Retention(RUNTIME)
 @Target({FIELD,TYPE,METHOD})
@@ -35,11 +37,12 @@ public @interface ConfigProperties {
 	 * @return retorna o nome do arquivo. 
 	 */
 	@Nonbinding 
-	String keyPath();
+	public String keyPath();
 	/**
 	 * Origem do arquivo. 
 	 * <p>Se não informado, retorna o valor default {@code PropertyType.CONFIG_SERVER}.</p>
 	 * 
 	 * @return Retorna a origem do arquivo.
 	 */
+	 public ZookeeperConfigPropertyType configPropertyType() default ZookeeperConfigPropertyType.REQUEST_SCOPED_NO_WATCHER;
 }

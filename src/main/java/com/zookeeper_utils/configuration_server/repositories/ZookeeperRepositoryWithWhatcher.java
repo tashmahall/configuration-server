@@ -1,70 +1,48 @@
 package com.zookeeper_utils.configuration_server.repositories;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.validation.constraints.NotNull;
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
 
-import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.RetryNTimes;
 import org.apache.curator.x.async.AsyncCuratorFramework;
-import org.apache.log4j.Logger;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
+import com.zookeeper_utils.configuration_server.repositories.annotations.ZKReopositoryWatcher;
 import com.zookeeper_utils.configuration_server.watchers.ConfigurationEventWatcher;
 import com.zookeeper_utils.configuration_server.watchers.ConfigurationTreeWatcher;
-
-public class ZookeeperRepository implements Serializable {
+@ZKReopositoryWatcher
+public class ZookeeperRepositoryWithWhatcher implements ZookeeperRepositoryInterface {
 	/**
 	 * 
 	 */
 	public static final String CONFIGURATION_TREE = "configurationTree";
 	private static final long serialVersionUID = 1L;
-	private final Logger log = Logger.getLogger(this.getClass());
 	
+	@Inject
+	private ServletContext context;	
 	private CuratorFramework clientZookeeper;
 	private AsyncCuratorFramework async;
+	private Map<String,String> configurationMap;
 	
-    public ZookeeperRepository (@NotNull String host,@NotNull String port) {
-    	org.apache.log4j.BasicConfigurator.configure();
-    	RetryPolicy retryPolicy = new RetryNTimes(0, 60000);
-    	clientZookeeper = CuratorFrameworkFactory.newClient(host+":"+port, retryPolicy);
+    public ZookeeperRepositoryWithWhatcher () throws ConfigPropertiesException {
+    	clientZookeeper = CuratorFrameworkFactory.newClient(loadHostAndPort(), RETRY_POLICY);
     	async = AsyncCuratorFramework.wrap(clientZookeeper);
     	clientZookeeper.start(); 
-   		
     }
-	public String getConfigurationValueUnwatchedWay(@NotNull String key) throws ConfigPropertiesException  {
-		String value;
-		try {
-			value = new String (this.clientZookeeper.getData().forPath(key));
-			log.debug("Key Path ["+key+"] - Configuration Data ["+new String(this.clientZookeeper.getData().forPath(key))+"]");
-			return value;
-		} catch (Exception e) {
-			throw new ConfigPropertiesException("Erro ao tentar carregar a propriedade com 'keyPath' ["+key+"]");
-		}
 
-	}
-
-	public Map<String,String> getNewConfigurationMap(@NotNull String... keys) throws Exception {
-		Map<String,String> configurationMap = new TreeMap<String,String>();
-		for(String key: keys) {
-			configurationMap.put(key, new String (this.clientZookeeper.getData().forPath(key)));
-			log.debug("Key Path ["+key+"] - Configuration Data ["+new String(this.clientZookeeper.getData().forPath(key))+"]");
-			this.async.watched().checkExists().forPath(key).event().thenAccept(new ConfigurationEventWatcher(this.clientZookeeper,configurationMap));
-		}
-		return configurationMap;
-	}
-	public Map<String,String> getConfigurationTree(@NotNull String contextName) throws ConfigPropertiesException{
-		Map<String,String> configurationMap = new TreeMap<String, String>();
-		this.treeGenerator(contextName, configurationMap);
+    @Override
+	public Map<String, String> getKeyPathTree() throws ConfigPropertiesException {
+		configurationMap = new TreeMap<String, String>();
+		String realContext = "/"+context.getServletContextName();
+		this.treeGenerator(realContext, configurationMap);
 		return configurationMap;
 	}
 	private void treeGenerator(String context, Map<String, String> configurationMap) throws ConfigPropertiesException {
-		
 		try {
 			List<String> list = this.clientZookeeper.getChildren().forPath(context);
 			for(String child:list) {
@@ -77,10 +55,12 @@ public class ZookeeperRepository implements Serializable {
 					defineWatcher(context, configurationMap, newCtx);
 				}
 			}
-		} catch (Exception e1) {
-			throw new ConfigPropertiesException(e1.getMessage(),e1);
+		}catch(ConfigPropertiesException ce) {
+			throw ce;
 		}
-
+		catch (Exception e1) {
+			throw new ConfigPropertiesException("Got the error "+e1.getMessage()+" while getting children properties to the 'keyPath' ["+context+"]",e1);
+		}
 	}
 	private void defineWatcher(String context, Map<String, String> configurationMap, String newCtx) throws ConfigPropertiesException {
 			try {
@@ -94,9 +74,19 @@ public class ZookeeperRepository implements Serializable {
 				this.async.watched().checkExists().forPath(context).event().thenAccept(new ConfigurationEventWatcher(this.clientZookeeper,configurationMap));
 				this.async.watched().getChildren().forPath(context).event().thenAccept(new ConfigurationTreeWatcher(this.clientZookeeper,configurationMap));
 			} catch (Exception e) {
-				throw new ConfigPropertiesException("Erro ao definir o valor da propriedade para o 'keyPath' ["+newCtx+"]",e);
+				throw new ConfigPropertiesException("Got the error "+e.getMessage()+" while load the properties to the 'keyPath' ["+newCtx+"]",e);
 			} 
 	}
+
+	@Override
+	public String getValueFromKeyPath(String keyPath) throws ConfigPropertiesException {
+		String realKeyPath ="/"+context.getServletContextName()+keyPath;
+		if(configurationMap ==null ) {
+			getKeyPathTree();
+		} 
+		return configurationMap.get(realKeyPath);
+	}
+
 }
 
 

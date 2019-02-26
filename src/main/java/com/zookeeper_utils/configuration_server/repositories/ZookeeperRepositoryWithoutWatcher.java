@@ -4,40 +4,40 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
-import javax.validation.constraints.NotNull;
 
-import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.RetryNTimes;
-import org.apache.log4j.Logger;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
+import com.zookeeper_utils.configuration_server.repositories.annotations.SanitizeKeyPath;
+import com.zookeeper_utils.configuration_server.repositories.annotations.ZKGlobalReopositoryNoWatcher;
 
-public class ZookeeperWithoutWatcher implements ZookeeperRepositoryInterface {
+@ZKGlobalReopositoryNoWatcher
+@RequestScoped
+public class ZookeeperRepositoryWithoutWatcher implements ZookeeperRepositoryInterface {
 
-	private final Logger log = Logger.getLogger(this.getClass());
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Inject
 	private ServletContext context;	
 	private CuratorFramework clientZookeeper;
-	public ZookeeperWithoutWatcher (@NotNull String host,@NotNull String port) {
-    	org.apache.log4j.BasicConfigurator.configure();
-    	RetryPolicy retryPolicy = new RetryNTimes(0, 60000);
-    	clientZookeeper = CuratorFrameworkFactory.newClient(host+":"+port, retryPolicy);
+	public ZookeeperRepositoryWithoutWatcher () throws ConfigPropertiesException {
+    	clientZookeeper = CuratorFrameworkFactory.newClient(loadHostAndPort(), RETRY_POLICY);
     	clientZookeeper.start(); 
 	}
-	public String getValueFromKeyPath(@NotNull String keyPath) throws ConfigPropertiesException  {
+	public String getValueFromKeyPath(@SanitizeKeyPath String keyPath) throws ConfigPropertiesException  {
 		String realKeyPath ="/"+context.getServletContextName()+keyPath;
-		String value;
 		try {
-			value = new String (this.clientZookeeper.getData().forPath(realKeyPath));
-			log.debug("Key Path ["+keyPath+"] - Configuration Data ["+new String(this.clientZookeeper.getData().forPath(keyPath))+"]");
+			String value = new String (this.clientZookeeper.getData().forPath(realKeyPath));
 			return value;
 		} catch (Exception e) {
-			throw new ConfigPropertiesException("Erro ao tentar carregar a propriedade com 'keyPath' ["+keyPath+"]",e);
+			throw new ConfigPropertiesException("Got the error "+e.getMessage()+" while load the properties to the 'keyPath' ["+keyPath+"]",e);
 		}
 	}
 	public Map<String,String> getKeyPathTree() throws ConfigPropertiesException{
@@ -60,8 +60,11 @@ public class ZookeeperWithoutWatcher implements ZookeeperRepositoryInterface {
 					defineWatcher(context, configurationMap, newCtx);
 				}
 			}
-		} catch (Exception e1) {
-			throw new ConfigPropertiesException(e1.getMessage(),e1);
+		}catch(ConfigPropertiesException ce) {
+			throw ce;
+		}
+		catch (Exception e1) {
+			throw new ConfigPropertiesException("Got the error "+e1.getMessage()+" while getting children properties to the 'keyPath' ["+context+"]",e1);
 		}
 	}
 	private void defineWatcher(String context, Map<String, String> configurationMap, String newCtx) throws ConfigPropertiesException {
@@ -74,7 +77,7 @@ public class ZookeeperWithoutWatcher implements ZookeeperRepositoryInterface {
 					configurationMap.put(newCtx,null);
 				}
 			} catch (Exception e) {
-				throw new ConfigPropertiesException("Erro ao definir o valor da propriedade para o 'keyPath' ["+newCtx+"]",e);
+				throw new ConfigPropertiesException("Got the error "+e.getMessage()+" while load the properties to the 'keyPath' ["+newCtx+"]",e);
 			} 
 	}
 }

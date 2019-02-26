@@ -213,6 +213,11 @@
 		    <artifactId>curator-x-async</artifactId>
 		    <version>4.1.0</version>
 		</dependency>
-    
+
+		<dependency>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se-core</artifactId>
+			<version>3.1.0.Final</version>
+		</dependency>
   </dependencies>
 </project>

@@ -16,8 +16,7 @@ import org.jboss.logging.Logger;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.lalyos.jfiglet.FigletFont;
 import com.zookeeper_utils.configuration_server.properties.ConfigProperties;
-import com.zookeeper_utils.configuration_server.properties.ZookeeperConfigProperties;
-import com.zookeeper_utils.configuration_server.repositories.SanitizeKeyPath;
+import com.zookeeper_utils.configuration_server.properties.ZookeeperConfigPropertiesApplicationScoped;
 import com.zookeeper_utils.configuration_server.utils.JackJsonUtils;
 
 
@@ -33,7 +32,7 @@ public class ZookeeperController implements Serializable{
 	private ServletContext context;
 	
 	@Inject
-	private ZookeeperConfigProperties zookeeperConfigProperties;
+	private ZookeeperConfigPropertiesApplicationScoped zookeeperConfigProperties;
 	
 	@Inject
 	@ConfigProperties(keyPath="/test")
@@ -43,33 +42,32 @@ public class ZookeeperController implements Serializable{
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getKeys() throws Exception {
 		log.debug(FigletFont.convertOneLine("Test Working "+ teste));
-		test("teste");
-		return getConfigurationTree();
-	}
-	@Inject
-	private void test( @SanitizeKeyPath String teste) {
 		
+		return getConfigurationTree();
 	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getParametersTree() throws Exception {
-		return zookeeperConfigProperties.getMessage("/"+context.getServletContextName()+"/info/ambiente/keys");
+//		return zookeeperConfigProperties.getMessage("/"+context.getServletContextName()+"/info/ambiente/keys");
+		return null;
 	}
 	
 	@GET
 	@Path("/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getInfo(@PathParam("key") String key) throws Exception {
-        return zookeeperConfigProperties.getMessage("/"+key);
+//        return zookeeperConfigProperties.getMessage("/"+key);
+        return null;
 	}
 	@GET
 	@Path("/configurationtree")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getConfigurationTree() throws Exception {
 		ObjectNode response = JackJsonUtils.createNewNode();
-		JackJsonUtils.put(response, "configuration-tree", zookeeperConfigProperties.getConfigurationTree());
-		return JackJsonUtils.getString(response);
+//		JackJsonUtils.put(response, "configuration-tree", zookeeperConfigProperties.getConfigurationTree());
+//		return JackJsonUtils.getString(response);
+		return null;
 	}
 
 }

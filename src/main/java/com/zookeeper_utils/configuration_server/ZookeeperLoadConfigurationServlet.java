@@ -5,7 +5,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpServlet;
 
-import com.zookeeper_utils.configuration_server.properties.ZookeeperConfigProperties;
+import com.zookeeper_utils.configuration_server.properties.ZookeeperConfigPropertiesApplicationScoped;
 
 public class ZookeeperLoadConfigurationServlet extends HttpServlet implements ServletContextListener {
 
@@ -14,7 +14,7 @@ public class ZookeeperLoadConfigurationServlet extends HttpServlet implements Se
 	 */
 	private static final long serialVersionUID = 1L;
 	@Inject
-	private ZookeeperConfigProperties zookeeperConfigProperties;
+	private ZookeeperConfigPropertiesApplicationScoped zookeeperConfigProperties;
 	
 	
 //	@Override
@@ -30,7 +30,7 @@ public class ZookeeperLoadConfigurationServlet extends HttpServlet implements Se
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		try {
-			zookeeperConfigProperties.getConfigurationTree();
+//			zookeeperConfigProperties.getConfigurationTree();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

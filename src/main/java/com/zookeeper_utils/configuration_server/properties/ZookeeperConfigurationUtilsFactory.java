@@ -9,12 +9,12 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 
-import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepository;
+import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepositoryWithWhatcher;
 
 
 
 /**
- * Produz objetos {@link ZookeeperConfigProperties} 
+ * Produz objetos {@link ZookeeperConfigPropertiesApplicationScoped} 
  * a partir do Zookeeper {@code .properties} localizados no <i>ClassLoader</i> da aplicaÃ§Ã£o.
  * 
  * <p>Este <i>producer</i> reconhece informaÃ§Ãµes da anotaÃ§Ã£o {@link FileMessage}.</p>
@@ -30,18 +30,19 @@ public class ZookeeperConfigurationUtilsFactory implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	@Inject
-	private ZookeeperRepository zc;
+	private ZookeeperRepositoryWithWhatcher zc;
 	@Produces
-	public ZookeeperConfigProperties produce(InjectionPoint injectionPoint) throws IOException{
+	public ZookeeperConfigPropertiesApplicationScoped produce(InjectionPoint injectionPoint) throws IOException{
 		return build();
 	}
 	
-	public ZookeeperConfigProperties build() throws IOException{
+	public ZookeeperConfigPropertiesApplicationScoped build() throws IOException{
 		String fileName = "zookeeper.properties";
 		Properties properties = new Properties();
-		properties.load(ZookeeperConfigProperties.class.getClassLoader().getResourceAsStream(fileName));
+		properties.load(ZookeeperConfigPropertiesApplicationScoped.class.getClassLoader().getResourceAsStream(fileName));
 		String contextName = properties.getProperty("application.context.name");
-		return new ZookeeperConfigProperties(zc, contextName);
+//		return new ZookeeperConfigPropertiesApplicationScoped(zc, contextName);
+		return null;
 	}
 
 

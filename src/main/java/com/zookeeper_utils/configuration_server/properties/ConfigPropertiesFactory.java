@@ -18,7 +18,7 @@ public class ConfigPropertiesFactory implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@Inject
-	private ZookeeperConfigProperties zookeeperConfigProperties;
+	private ZookeeperConfigPropertiesApplicationScoped zookeeperConfigProperties;
 	
 	@Produces
 	@ConfigProperties(keyPath="")
@@ -30,7 +30,8 @@ public class ConfigPropertiesFactory implements Serializable{
 	}
 
 	public String getKeyValue(String key) throws ConfigPropertiesException {
-		String value = zookeeperConfigProperties.getPropertyValueUnwatchedWay(key);
-		return value;
+//		String value = zookeeperConfigProperties.getPropertyValueUnwatchedWay(key);
+//		return value;
+		return null;
 	}
 }

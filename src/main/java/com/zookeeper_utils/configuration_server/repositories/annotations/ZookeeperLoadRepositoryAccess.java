@@ -1,4 +1,4 @@
-package com.zookeeper_utils.configuration_server.repositories;
+package com.zookeeper_utils.configuration_server.repositories.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -19,6 +19,7 @@ import java.lang.annotation.Target;
  * @author igor.ferreira
  * 
  */
+//TODO THIS CLASS PROBABLY WILL BE REMOVED IN THE CODING END 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
