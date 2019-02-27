@@ -1,4 +1,4 @@
-package com.zookeeper_utils.configuration_server.properties;
+package com.zookeeper_utils.configuration_server.services;
 
 import java.util.Map;
 
@@ -6,7 +6,8 @@ import javax.enterprise.context.RequestScoped;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepositoryInterface;
-import com.zookeeper_utils.configuration_server.repositories.annotations.ZKReopositoryNoWatcher;
+import com.zookeeper_utils.configuration_server.repositories.annotations.ZKGlobalReopositoryNoWatcher;
+import com.zookeeper_utils.configuration_server.services.annotations.ZKServicePropertiesGlobalRequestScoped;
 
 
 /**
@@ -18,14 +19,15 @@ import com.zookeeper_utils.configuration_server.repositories.annotations.ZKReopo
  *
  */
 @RequestScoped
- public class ZookeeperConfigPropertiesRequestScoped {
+@ZKServicePropertiesGlobalRequestScoped
+ public class ZookeeperServicePropertiesGlobalRequestScoped  implements ZookeeperServicePropertiesInterface {
 
 	/**
 	 * 
 	 */
-	@ZKReopositoryNoWatcher
+	@ZKGlobalReopositoryNoWatcher
 	private ZookeeperRepositoryInterface zc;
-	public ZookeeperConfigPropertiesRequestScoped () {}
+	public ZookeeperServicePropertiesGlobalRequestScoped () {}
 	/**
 	 * Return the value for the keyPath informed.
 	 * 

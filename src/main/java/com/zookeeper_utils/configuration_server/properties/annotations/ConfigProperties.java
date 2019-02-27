@@ -1,4 +1,4 @@
-package com.zookeeper_utils.configuration_server.properties;
+package com.zookeeper_utils.configuration_server.properties.annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
 
 import javax.enterprise.util.Nonbinding;
 import javax.inject.Qualifier;
+
+import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertyType;
 
 /**
  * Declara informações do arquivo {@code .properties} 
@@ -44,5 +46,5 @@ public @interface ConfigProperties {
 	 * 
 	 * @return Retorna a origem do arquivo.
 	 */
-	 public ZookeeperConfigPropertyType configPropertyType() default ZookeeperConfigPropertyType.REQUEST_SCOPED_NO_WATCHER;
+	 public ZookeeperServicePropertyType configPropertyType() default ZookeeperServicePropertyType.REQUEST_SCOPED_NO_WATCHER;
 }

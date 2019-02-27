@@ -1,4 +1,4 @@
-package com.zookeeper_utils.configuration_server.properties;
+package com.zookeeper_utils.configuration_server.services;
 
 /**
  * Ways to load the Configuration properties from the configuration server.
@@ -6,7 +6,7 @@ package com.zookeeper_utils.configuration_server.properties;
  * @author igor.ferreira
  *
  */
-public enum ZookeeperConfigPropertyType {
+public enum ZookeeperServicePropertyType {
 	/** Load Global configurations from Config Server. 
 	 */
 	GLOBAL_CONTEXT_NO_WATCHER, 

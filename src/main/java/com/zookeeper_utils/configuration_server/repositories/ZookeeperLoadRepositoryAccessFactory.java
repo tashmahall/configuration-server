@@ -7,12 +7,12 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
-import com.zookeeper_utils.configuration_server.properties.ZookeeperConfigPropertiesApplicationScoped;
+import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertiesApplicationScoped;
 
 
 
 /**
- * Produz objetos {@link ZookeeperConfigPropertiesApplicationScoped} 
+ * Produz objetos {@link ZookeeperServicePropertiesApplicationScoped} 
  * a partir do Zookeeper {@code .properties} localizados no <i>ClassLoader</i> da aplicaÃ§Ã£o.
  * 
  * <p>Este <i>producer</i> reconhece informaÃ§Ãµes da anotaÃ§Ã£o {@link FileMessage}.</p>

@@ -140,5 +140,10 @@ public class JackJsonUtils {
 	public static ArrayNode listObjectToJsonNode(List<?> list ) {
 		return objectMapper.valueToTree(list);
 	}
+	public static String createJsonLine(String key, String value) throws JsonProcessingException {
+		ObjectNode response = JackJsonUtils.createNewNode();
+		JackJsonUtils.put(response, key,value);
+		return JackJsonUtils.getString(response);
+	}
 	
 }

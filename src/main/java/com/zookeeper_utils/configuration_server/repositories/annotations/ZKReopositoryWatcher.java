@@ -8,7 +8,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
-import javax.interceptor.InterceptorBinding;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepositoryWithoutWatcher;
@@ -22,7 +21,6 @@ import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepository
  * 
  */
 @Qualifier
-@InterceptorBinding
 @Retention(RUNTIME)
 @Target({ FIELD,TYPE })
 public @interface ZKReopositoryWatcher {

@@ -1,4 +1,4 @@
-package com.zookeeper_utils.configuration_server.properties;
+package com.zookeeper_utils.configuration_server.services;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -18,13 +18,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepositoryInterface;
+import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertiesApplicationScoped;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ZookeeperConfigPropertiesApplicationScopedTest {
+public class ZookeeperServicePropertiesApplicationScopedTest {
 	
 	@Spy
 	@InjectMocks
-	private ZookeeperConfigPropertiesApplicationScoped sbv;
+	private ZookeeperServicePropertiesApplicationScoped sbv;
 	
 	@Mock
 	private ZookeeperRepositoryInterface zc;

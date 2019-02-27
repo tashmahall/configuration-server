@@ -13,9 +13,7 @@ public class ConfigurationTreeWatcher implements Consumer<WatchedEvent> {
 	private final Logger log = Logger.getLogger(this.getClass());
 	private CuratorFramework client;
 	private Map<String,String> configurationMap;
-	public ConfigurationTreeWatcher() {}
 	public ConfigurationTreeWatcher(CuratorFramework client, Map<String,String> configurationMap) {
-		org.apache.log4j.BasicConfigurator.configure();
 		this.client = client;
 		this.configurationMap = configurationMap;
 	}
@@ -23,15 +21,15 @@ public class ConfigurationTreeWatcher implements Consumer<WatchedEvent> {
 	@Override
 	public void accept(WatchedEvent event) {
 		if(event.getType().compareTo(EventType.NodeChildrenChanged)==0) {
+			String znodeKey = null ;
 	        try {
-	        	String znodeKey = event.getPath();
-				String data = new String(client.getData().forPath(event.getPath()));
+	        	znodeKey = event.getPath();
+				String data = new String(client.getData().forPath(znodeKey));
 				configurationMap.put(znodeKey, data);
 				AsyncCuratorFramework async= AsyncCuratorFramework.wrap(client);
 		        async.watched().getChildren().forPath(znodeKey).event().thenAccept(this);
-		        log.debug("Key Path ["+event.getPath()+"] - New Configuration Data ["+data+"]");
 	        } catch (Exception e) {
-	        	log.error(e);
+	        	log.error("Got error "+e.getMessage()+" while creating the event whatcher to the path ["+znodeKey+"]",e);
 			}
 		}
 	}

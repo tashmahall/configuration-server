@@ -1,11 +1,11 @@
 package com.zookeeper_utils.configuration_server;
 
-import javax.inject.Inject;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpServlet;
 
-import com.zookeeper_utils.configuration_server.properties.ZookeeperConfigPropertiesApplicationScoped;
+import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertiesApplicationScoped;
+import com.zookeeper_utils.configuration_server.services.annotations.ZKServicePropertiesAppScoped;
 
 public class ZookeeperLoadConfigurationServlet extends HttpServlet implements ServletContextListener {
 
@@ -13,8 +13,8 @@ public class ZookeeperLoadConfigurationServlet extends HttpServlet implements Se
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@Inject
-	private ZookeeperConfigPropertiesApplicationScoped zookeeperConfigProperties;
+	@ZKServicePropertiesAppScoped
+	private ZookeeperServicePropertiesApplicationScoped zookeeperConfigProperties;
 	
 	
 //	@Override
