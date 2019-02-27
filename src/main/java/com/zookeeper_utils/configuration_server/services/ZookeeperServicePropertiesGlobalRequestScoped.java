@@ -3,6 +3,7 @@ package com.zookeeper_utils.configuration_server.services;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepositoryInterface;
@@ -25,6 +26,7 @@ import com.zookeeper_utils.configuration_server.services.annotations.ZKServicePr
 	/**
 	 * 
 	 */
+	@Inject
 	@ZKGlobalReopositoryNoWatcher
 	private ZookeeperRepositoryInterface zc;
 	public ZookeeperServicePropertiesGlobalRequestScoped () {}
