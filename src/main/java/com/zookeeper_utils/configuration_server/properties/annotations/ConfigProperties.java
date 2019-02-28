@@ -15,13 +15,6 @@ import javax.inject.Qualifier;
 import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertyType;
 
 /**
- * Declara informações do arquivo {@code .properties} 
- * para produção de objetos {@link ZookeeperConfigPropeperties}. 
- * 
- * <ul>
- * 	<li>O atributo {@code value} informa o nome do arquivo.</li>
- * </ul>
- * 
  * 
  * @author igor.ferreira
  * 
@@ -34,17 +27,17 @@ public @interface ConfigProperties {
 	/**
 	 * Nome do arquivo de mensagem.
 	 * <p>Este valor é obrigatório.
-	 * <br>A extensão {@code .properties} pode ser suprimida.</p>
 	 * 
-	 * @return retorna o nome do arquivo. 
+	 * @return retorna o nome do keyPath. 
 	 */
-	@Nonbinding 
-	public String keyPath();
+	@Nonbinding
+	public String keyPath() ;
 	/**
 	 * Origem do arquivo. 
 	 * <p>Se não informado, retorna o valor default {@code PropertyType.CONFIG_SERVER}.</p>
 	 * 
 	 * @return Retorna a origem do arquivo.
 	 */
+	@Nonbinding	
 	 public ZookeeperServicePropertyType configPropertyType() default ZookeeperServicePropertyType.REQUEST_SCOPED_NO_WATCHER;
 }

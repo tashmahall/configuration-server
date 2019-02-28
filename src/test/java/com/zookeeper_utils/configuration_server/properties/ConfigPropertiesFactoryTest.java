@@ -6,6 +6,7 @@ import static com.zookeeper_utils.configuration_server.services.ZookeeperService
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.InjectionPoint;
 
@@ -38,15 +39,24 @@ public class ConfigPropertiesFactoryTest {
 	private ConfigProperties configProperties;
 	
 	@Mock
-	private ZookeeperServicePropertiesInterface zkServiceAppScoped;
+	private ZookeeperServicePropertiesInterface  zcInstanceServiceAppScoped;
 	
 	@Mock
-	private ZookeeperServicePropertiesInterface zkServiceReqScoped;
+	private ZookeeperServicePropertiesInterface  zcInstanceServiceReqScoped;
 	
 	@Mock
-	private ZookeeperServicePropertiesInterface zkServiceGlobalReqScoped;
+	private ZookeeperServicePropertiesInterface  zcInstanceServiceGlobalReqScoped;
 	
-    @Rule
+	@Mock
+	private	Instance<ZookeeperServicePropertiesInterface> zkServiceAppScoped;
+
+	@Mock
+	private	Instance<ZookeeperServicePropertiesInterface> zkServiceReqScoped;
+	
+	@Mock
+	private	Instance<ZookeeperServicePropertiesInterface>  zkServiceGlobalReqScoped;
+
+	@Rule
     public ExpectedException thrown = ExpectedException.none();
 
 	private String keyPath;
@@ -54,6 +64,9 @@ public class ConfigPropertiesFactoryTest {
 	
 	@Before
 	public void loadData() {
+		when(zkServiceAppScoped.get()).thenReturn(zcInstanceServiceAppScoped);
+		when(zkServiceReqScoped.get()).thenReturn(zcInstanceServiceReqScoped);
+		when(zkServiceGlobalReqScoped.get()).thenReturn(zcInstanceServiceGlobalReqScoped);
 		keyPath = "/first1";
 		value = "test /zookeeper/first1";
 	}
@@ -64,7 +77,7 @@ public class ConfigPropertiesFactoryTest {
 		when(annotated.getAnnotation(ConfigProperties.class)).thenReturn(configProperties);
 		when(configProperties.keyPath()).thenReturn(keyPath);
 		when(configProperties.configPropertyType()).thenReturn(GLOBAL_CONTEXT_NO_WATCHER);
-		when(zkServiceGlobalReqScoped.getPropertyValue(keyPath)).thenReturn(value);
+		when(zcInstanceServiceGlobalReqScoped.getPropertyValue(keyPath)).thenReturn(value);
 		String test = sbv.produce(injectionPoint);
 		assertEquals(value,test);
 		
@@ -75,7 +88,7 @@ public class ConfigPropertiesFactoryTest {
 		when(annotated.getAnnotation(ConfigProperties.class)).thenReturn(configProperties);
 		when(configProperties.keyPath()).thenReturn(keyPath);
 		when(configProperties.configPropertyType()).thenReturn(REQUEST_SCOPED_NO_WATCHER);
-		when(zkServiceReqScoped.getPropertyValue(keyPath)).thenReturn(value);
+		when(zcInstanceServiceReqScoped.getPropertyValue(keyPath)).thenReturn(value);
 		String test = sbv.produce(injectionPoint);
 		assertEquals(value,test);
 	}
@@ -85,7 +98,7 @@ public class ConfigPropertiesFactoryTest {
 		when(annotated.getAnnotation(ConfigProperties.class)).thenReturn(configProperties);
 		when(configProperties.keyPath()).thenReturn(keyPath);
 		when(configProperties.configPropertyType()).thenReturn(APPLICATION_SCOPED_WITH_WATCHER);
-		when(zkServiceAppScoped.getPropertyValue(keyPath)).thenReturn(value);
+		when(zcInstanceServiceAppScoped.getPropertyValue(keyPath)).thenReturn(value);
 		String test = sbv.produce(injectionPoint);
 		assertEquals(value,test);
 	}

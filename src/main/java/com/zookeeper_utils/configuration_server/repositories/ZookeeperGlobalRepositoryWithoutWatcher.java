@@ -4,14 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.annotations.SanitizeKeyPath;
 import com.zookeeper_utils.configuration_server.repositories.annotations.ZKGlobalReopositoryNoWatcher;
+
 
 @ZKGlobalReopositoryNoWatcher
 public class ZookeeperGlobalRepositoryWithoutWatcher implements ZookeeperRepositoryInterface {
@@ -20,11 +19,10 @@ public class ZookeeperGlobalRepositoryWithoutWatcher implements ZookeeperReposit
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
 	//TODO verificar com Samuel qual vai ser o repositorio global
-	private String globalRepository = "ANS";
+	private String globalRepository = "ans";
 	private CuratorFramework clientZookeeper;
-	public ZookeeperGlobalRepositoryWithoutWatcher (@NotNull String host,@NotNull String port) throws ConfigPropertiesException {
+	public ZookeeperGlobalRepositoryWithoutWatcher () throws ConfigPropertiesException {
     	clientZookeeper = CuratorFrameworkFactory.newClient(loadHostAndPort(), RETRY_POLICY);
     	clientZookeeper.start(); 
 	}
@@ -78,7 +76,7 @@ public class ZookeeperGlobalRepositoryWithoutWatcher implements ZookeeperReposit
 				throw new ConfigPropertiesException("Got the error "+e.getMessage()+" while load the properties to the 'keyPath' ["+newCtx+"]",e);
 			} 
 	}
-	public String getGlobalRepository() {
+	public String getContextNameRepository() {
 		return globalRepository;
 	}
 }

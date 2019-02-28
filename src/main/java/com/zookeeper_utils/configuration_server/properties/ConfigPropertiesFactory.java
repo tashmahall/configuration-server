@@ -3,6 +3,7 @@ package com.zookeeper_utils.configuration_server.properties;
 import java.io.Serializable;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.InjectionPoint;
@@ -24,16 +25,18 @@ public class ConfigPropertiesFactory implements Serializable{
 	private static final long serialVersionUID = 1L;
 	@Inject
 	@ZKServicePropertiesAppScoped
-	private ZookeeperServicePropertiesInterface zkServiceAppScoped;
+	private	Instance<ZookeeperServicePropertiesInterface> zkServiceAppScoped;
+	
 	@Inject
 	@ZKServicePropertiesRequestScoped
-	private ZookeeperServicePropertiesInterface zkServiceReqScoped;
+	private	Instance<ZookeeperServicePropertiesInterface> zkServiceReqScoped;
+	
 	@Inject
 	@ZKServicePropertiesGlobalRequestScoped
-	private ZookeeperServicePropertiesInterface zkServiceGlobalReqScoped;
+	private	Instance<ZookeeperServicePropertiesInterface>  zkServiceGlobalReqScoped;
 	
 	@Produces
-	@ConfigProperties(keyPath="")
+	@ConfigProperties(keyPath = "")
 	public String produce(InjectionPoint injectionPoint) throws ConfigPropertiesException {
 		Annotated annotated = injectionPoint.getAnnotated();
 		ConfigProperties configProperties = annotated.getAnnotation(ConfigProperties.class);
@@ -52,15 +55,15 @@ public class ConfigPropertiesFactory implements Serializable{
 	}
 
 	private String getKeyValueGlobalContextNoWatcher(String key) throws ConfigPropertiesException {
-		String value = zkServiceGlobalReqScoped.getPropertyValue(key);
+		String value = zkServiceGlobalReqScoped.get().getPropertyValue(key);
 		return value;
 	}
 	private String getKeyValueAppScopedWithWatcher(String key) throws ConfigPropertiesException {
-		String value = zkServiceAppScoped.getPropertyValue(key);
+		String value = zkServiceAppScoped.get().getPropertyValue(key);
 		return value;
 	}
 	private String getKeyValueReqScopedWithoutWatcher(String key) throws ConfigPropertiesException {
-		String value = zkServiceReqScoped.getPropertyValue(key);
+		String value = zkServiceReqScoped.get().getPropertyValue(key);
 		return value;
 	}
 }

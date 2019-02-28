@@ -12,6 +12,7 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.x.async.AsyncCuratorFramework;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
+import com.zookeeper_utils.configuration_server.repositories.annotations.SanitizeKeyPath;
 import com.zookeeper_utils.configuration_server.repositories.annotations.ZKReopositoryWatcher;
 import com.zookeeper_utils.configuration_server.watchers.ConfigurationEventWatcher;
 import com.zookeeper_utils.configuration_server.watchers.ConfigurationTreeWatcher;
@@ -79,7 +80,7 @@ public class ZookeeperRepositoryWithWhatcher implements ZookeeperRepositoryInter
 	}
 
 	@Override
-	public String getValueFromKeyPath(String keyPath) throws ConfigPropertiesException {
+	public String getValueFromKeyPath(@SanitizeKeyPath String keyPath) throws ConfigPropertiesException {
 		String realKeyPath ="/"+context.getServletContextName()+keyPath;
 		if(configurationMap ==null ) {
 			getKeyPathTree();

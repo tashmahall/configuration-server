@@ -18,7 +18,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepositoryInterface;
-import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertiesGlobalRequestScoped;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ZookeeperServicePropertiesGlobalRequestScopedTest {
@@ -29,7 +28,7 @@ public class ZookeeperServicePropertiesGlobalRequestScopedTest {
 	
 	@Mock
 	private ZookeeperRepositoryInterface zc;
-
+	
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 	

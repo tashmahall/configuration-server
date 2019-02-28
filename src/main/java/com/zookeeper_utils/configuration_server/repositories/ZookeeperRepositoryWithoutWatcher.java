@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
@@ -13,10 +12,9 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.annotations.SanitizeKeyPath;
-import com.zookeeper_utils.configuration_server.repositories.annotations.ZKGlobalReopositoryNoWatcher;
+import com.zookeeper_utils.configuration_server.repositories.annotations.ZKReopositoryNoWatcher;
 
-@ZKGlobalReopositoryNoWatcher
-@RequestScoped
+@ZKReopositoryNoWatcher
 public class ZookeeperRepositoryWithoutWatcher implements ZookeeperRepositoryInterface {
 
 	/**

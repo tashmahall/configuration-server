@@ -2,8 +2,10 @@ package com.zookeeper_utils.configuration_server.controllers;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -22,9 +24,9 @@ import com.zookeeper_utils.configuration_server.services.annotations.ZKServicePr
 import com.zookeeper_utils.configuration_server.utils.JackJsonUtils;
 
 
-@Path("/parametros")
+@Path("/parametrosAppScoped")
 @RequestScoped
-public class ZookeeperController implements Serializable{
+public class ZookeeperControllerAppScopedConfigProperties implements Serializable{
 	/**
 	 * 
 	 */
@@ -33,41 +35,37 @@ public class ZookeeperController implements Serializable{
 	
 	@Inject
 	@ZKServicePropertiesAppScoped
-	private ZookeeperServicePropertiesInterface zookeeperConfigProperties;
+	private	Instance<ZookeeperServicePropertiesInterface> zcInstance;
 	
 	@Inject
-	@ConfigProperties(keyPath="/test",configPropertyType=ZookeeperServicePropertyType.REQUEST_SCOPED_NO_WATCHER)
-	private String teste;
+	@ConfigProperties(keyPath="/appwithwatcher",configPropertyType=ZookeeperServicePropertyType.APPLICATION_SCOPED_WITH_WATCHER)
+	private String teste_APPLICATION_SCOPED_WITH_WATCHER;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getKeys() throws Exception {
-		log.debug(FigletFont.convertOneLine("Test Working "+ teste));
-		
-		return getConfigurationTree();
+		log.debug(FigletFont.convertOneLine("teste_APPLICATION_SCOPED_WITH_WATCHER Working "+ teste_APPLICATION_SCOPED_WITH_WATCHER));
+		String tree = Arrays.toString( zcInstance.get().getPropertiesMap().keySet().toArray());
+		zcInstance.destroy(zcInstance.get());
+		ObjectNode response = JackJsonUtils.createNewNode();
+		JackJsonUtils.put(response, "configuration-tree",tree);
+		return JackJsonUtils.getString(response);
 	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getParametersTree() throws Exception {
-		return JackJsonUtils.entityToJsonString(zookeeperConfigProperties.getPropertiesMap());
+		Map<String,String> map=	zcInstance.get().getPropertiesMap();
+		zcInstance.destroy(zcInstance.get());
+		return JackJsonUtils.entityToJsonString(map);
 	}
 	
 	@GET
 	@Path("/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getInfo(@PathParam("key") String key) throws Exception {
-		String keyValue = zookeeperConfigProperties.getPropertyValue(key);
+		String keyValue = zcInstance.get().getPropertyValue(key);
+		zcInstance.destroy(zcInstance.get());
 		return JackJsonUtils.createJsonLine(key, keyValue);
 	}
-	@GET
-	@Path("/configurationtree")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getConfigurationTree() throws Exception {
-		String tree = Arrays.toString( zookeeperConfigProperties.getPropertiesMap().keySet().toArray());
-		ObjectNode response = JackJsonUtils.createNewNode();
-		JackJsonUtils.put(response, "configuration-tree",tree);
-		return JackJsonUtils.getString(response);
-	}
-
 }

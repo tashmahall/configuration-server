@@ -47,12 +47,12 @@ public class ZookeeperGlobalRepositoryWithoutWhatcherTest {
 	
 	@Before
 	public void loadConfigurationMap() {
-		globalRepository = sbv.getGlobalRepository();
+		globalRepository = sbv.getContextNameRepository();
 		configurationMap = new TreeMap<String,String>();
 		configurationMap.put("/"+globalRepository+"/first1", null);
 		configurationMap.put("/"+globalRepository+"/first2","test /zookeeper/first2");
 		configurationMap.put("/"+globalRepository+"/first1/second1","test /zookeeper/first1/second1");
-		globalRepository = sbv.getGlobalRepository();
+		globalRepository = sbv.getContextNameRepository();
 		MockitoAnnotations.initMocks(this);
 	}
 	@Test
