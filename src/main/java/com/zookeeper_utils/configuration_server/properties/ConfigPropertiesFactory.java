@@ -55,15 +55,12 @@ public class ConfigPropertiesFactory implements Serializable{
 	}
 
 	private String getKeyValueGlobalContextNoWatcher(String key) throws ConfigPropertiesException {
-		String value = zkServiceGlobalReqScoped.get().getPropertyValue(key);
-		return value;
+		return zkServiceGlobalReqScoped.get().getPropertyValue(key);
 	}
 	private String getKeyValueAppScopedWithWatcher(String key) throws ConfigPropertiesException {
-		String value = zkServiceAppScoped.get().getPropertyValue(key);
-		return value;
+		return zkServiceAppScoped.get().getPropertyValue(key);
 	}
 	private String getKeyValueReqScopedWithoutWatcher(String key) throws ConfigPropertiesException {
-		String value = zkServiceReqScoped.get().getPropertyValue(key);
-		return value;
+		return zkServiceReqScoped.get().getPropertyValue(key);
 	}
 }

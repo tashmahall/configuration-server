@@ -29,7 +29,6 @@ import com.zookeeper_utils.configuration_server.services.annotations.ZKServicePr
 	@Inject
 	@ZKReopositoryNoWatcher
 	private ZookeeperRepositoryInterface zc;
-	public ZookeeperServicePropertiesRequestScoped () {}
 	/**
 	 * Return the value for the keyPath informed.
 	 * 
@@ -39,8 +38,7 @@ import com.zookeeper_utils.configuration_server.services.annotations.ZKServicePr
 	 * @throws Exception 
 	 */
     public String getPropertyValue(String keyPath) throws ConfigPropertiesException {
-    	String configuration=zc.getValueFromKeyPath(keyPath);
-        return configuration;
+    	return zc.getValueFromKeyPath(keyPath);
     }
      
     /**

@@ -2,6 +2,7 @@ package com.zookeeper_utils.configuration_server.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -16,13 +17,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JackJsonUtils {
+	private JackJsonUtils() {}
 
 	private static ObjectMapper objectMapper = init();
 	public static ObjectMapper init() {
 		ObjectMapper om = new ObjectMapper();
 		om.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-//		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm a z");
-//		om.setDateFormat(df);
 		return om;
 	}
 	public static void put(JsonNode node, String field, String value) {
@@ -129,7 +129,7 @@ public class JackJsonUtils {
 	public static <T> List<T> returnValueListFromPropertie(String propertiName, JsonNode node, Class<T> type) throws IOException{
 		JsonNode jsonNode = node.get(propertiName);
 		if(jsonNode == null || jsonNode.isNull()) {
-			return null;
+			return new ArrayList<>();
 		}else {
 			return objectMapper.readValue(jsonNode.toString(), objectMapper.getTypeFactory().constructCollectionLikeType(List.class,type));
 		}

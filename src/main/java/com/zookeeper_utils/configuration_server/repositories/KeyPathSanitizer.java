@@ -25,12 +25,9 @@ public class KeyPathSanitizer implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@AroundInvoke
-	public Object valid(InvocationContext ctx) throws Exception{
-
-		System.out.println(ctx.getTarget().toString());
+	public Object valid(InvocationContext ctx) throws ConfigPropertiesException {
 		return validate("/test");
 	}
-
 
 	private String validate(String keyPath) throws ConfigPropertiesException {
 		AbstractSanitizeValidation validate = new SanitezeFirstSlashValidation(

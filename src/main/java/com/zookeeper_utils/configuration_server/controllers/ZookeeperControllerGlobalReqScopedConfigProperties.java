@@ -14,8 +14,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.jboss.logging.Logger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.lalyos.jfiglet.FigletFont;
+import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.properties.annotations.ConfigProperties;
 import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertiesInterface;
 import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertyType;
@@ -38,12 +39,12 @@ public class ZookeeperControllerGlobalReqScopedConfigProperties implements Seria
 	
 	@Inject
 	@ConfigProperties(keyPath="/globalrequest",configPropertyType=ZookeeperServicePropertyType.GLOBAL_CONTEXT_NO_WATCHER)
-	private String teste_GLOBAL_CONTEXT_NO_WATCHER;
+	private String testeGlobalCtxNoWatcher;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getKeys() throws Exception {
-		log.debug(FigletFont.convertOneLine("teste_GLOBAL_CONTEXT_NO_WATCHER Working "+ teste_GLOBAL_CONTEXT_NO_WATCHER));
+	public String getKeys() throws ConfigPropertiesException, JsonProcessingException  {
+		log.debug("teste_GLOBAL_CONTEXT_NO_WATCHER Working "+ testeGlobalCtxNoWatcher);
 		String tree = Arrays.toString( zcInstance.get().getPropertiesMap().keySet().toArray());
 		ObjectNode response = JackJsonUtils.createNewNode();
 		JackJsonUtils.put(response, "configuration-tree",tree);
@@ -52,14 +53,14 @@ public class ZookeeperControllerGlobalReqScopedConfigProperties implements Seria
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getParametersTree() throws Exception {
+	public String getParametersTree() throws JsonProcessingException, ConfigPropertiesException {
 		return JackJsonUtils.entityToJsonString(zcInstance.get().getPropertiesMap());
 	}
 	
 	@GET
 	@Path("/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getInfo(@PathParam("key") String key) throws Exception {
+	public String getInfo(@PathParam("key") String key) throws ConfigPropertiesException, JsonProcessingException {
 		String keyValue = zcInstance.get().getPropertyValue(key);
 		return JackJsonUtils.createJsonLine(key, keyValue);
 	}

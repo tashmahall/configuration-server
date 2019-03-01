@@ -7,8 +7,11 @@ import java.util.TreeMap;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.RetryNTimes;
 import org.apache.curator.x.async.AsyncCuratorFramework;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
@@ -21,8 +24,8 @@ public class ZookeeperRepositoryWithWhatcher implements ZookeeperRepositoryInter
 	/**
 	 * 
 	 */
+	public static final RetryPolicy RETRY_POLICY = new RetryNTimes(0, 60000);
 	public static final String CONFIGURATION_TREE = "configurationTree";
-	private static final long serialVersionUID = 1L;
 	
 	@Inject
 	private ServletContext context;	
@@ -38,7 +41,7 @@ public class ZookeeperRepositoryWithWhatcher implements ZookeeperRepositoryInter
 
     @Override
 	public Map<String, String> getKeyPathTree() throws ConfigPropertiesException {
-		configurationMap = new TreeMap<String, String>();
+		configurationMap = new TreeMap<>();
 		String realContext = "/"+context.getServletContextName();
 		this.treeGenerator(realContext, configurationMap);
 		return configurationMap;
@@ -81,7 +84,7 @@ public class ZookeeperRepositoryWithWhatcher implements ZookeeperRepositoryInter
 
 	@Override
 	public String getValueFromKeyPath(@SanitizeKeyPath String keyPath) throws ConfigPropertiesException {
-		String realKeyPath ="/"+context.getServletContextName()+keyPath;
+		String realKeyPath = StringUtils.join("/",context.getServletContextName(),keyPath);
 		if(configurationMap ==null ) {
 			getKeyPathTree();
 		} 

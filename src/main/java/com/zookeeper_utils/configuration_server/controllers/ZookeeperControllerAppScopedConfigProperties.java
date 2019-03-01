@@ -15,8 +15,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.jboss.logging.Logger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.lalyos.jfiglet.FigletFont;
+import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.properties.annotations.ConfigProperties;
 import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertiesInterface;
 import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertyType;
@@ -39,12 +40,12 @@ public class ZookeeperControllerAppScopedConfigProperties implements Serializabl
 	
 	@Inject
 	@ConfigProperties(keyPath="/appwithwatcher",configPropertyType=ZookeeperServicePropertyType.APPLICATION_SCOPED_WITH_WATCHER)
-	private String teste_APPLICATION_SCOPED_WITH_WATCHER;
+	private String testeAppScopedWithWatcher;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getKeys() throws Exception {
-		log.debug(FigletFont.convertOneLine("teste_APPLICATION_SCOPED_WITH_WATCHER Working "+ teste_APPLICATION_SCOPED_WITH_WATCHER));
+	public String getKeys() throws ConfigPropertiesException, JsonProcessingException  {
+		log.debug("teste_APPLICATION_SCOPED_WITH_WATCHER Working "+ testeAppScopedWithWatcher);
 		String tree = Arrays.toString( zcInstance.get().getPropertiesMap().keySet().toArray());
 		zcInstance.destroy(zcInstance.get());
 		ObjectNode response = JackJsonUtils.createNewNode();
@@ -54,7 +55,7 @@ public class ZookeeperControllerAppScopedConfigProperties implements Serializabl
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getParametersTree() throws Exception {
+	public String getParametersTree() throws ConfigPropertiesException, JsonProcessingException  {
 		Map<String,String> map=	zcInstance.get().getPropertiesMap();
 		zcInstance.destroy(zcInstance.get());
 		return JackJsonUtils.entityToJsonString(map);
@@ -63,7 +64,7 @@ public class ZookeeperControllerAppScopedConfigProperties implements Serializabl
 	@GET
 	@Path("/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getInfo(@PathParam("key") String key) throws Exception {
+	public String getInfo(@PathParam("key") String key) throws ConfigPropertiesException, JsonProcessingException  {
 		String keyValue = zcInstance.get().getPropertyValue(key);
 		zcInstance.destroy(zcInstance.get());
 		return JackJsonUtils.createJsonLine(key, keyValue);

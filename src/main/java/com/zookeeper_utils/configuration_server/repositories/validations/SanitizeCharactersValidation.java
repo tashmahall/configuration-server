@@ -12,7 +12,7 @@ public class SanitizeCharactersValidation extends AbstractSanitizeValidation {
 
 	@Override
 	public void validationRule(String keyPath) throws ConfigPropertiesException {
-		String chars[] = keyPath.split("");
+		String[] chars = keyPath.split("");
 		Pattern pattern = Pattern.compile("([a-z]|/|[0-9])");
 		for(String character:chars) {
 			Matcher matcher = pattern.matcher(character);

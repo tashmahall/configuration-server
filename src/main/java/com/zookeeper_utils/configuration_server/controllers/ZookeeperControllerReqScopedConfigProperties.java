@@ -38,12 +38,12 @@ public class ZookeeperControllerReqScopedConfigProperties implements Serializabl
 	
 	@Inject
 	@ConfigProperties(keyPath="/requestnowatcher",configPropertyType=ZookeeperServicePropertyType.REQUEST_SCOPED_NO_WATCHER)
-	private String teste_REQUEST_SCOPED_NO_WATCHER;
+	private String testeRequestScopedNoWatcher;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getKeys() throws JsonProcessingException, ConfigPropertiesException  {
-		log.debug("teste_REQUEST_SCOPED_NO_WATCHER Working "+ teste_REQUEST_SCOPED_NO_WATCHER);
+		log.debug("teste_REQUEST_SCOPED_NO_WATCHER Working "+ testeRequestScopedNoWatcher);
 		String tree = Arrays.toString( zookeeperServicePropertiesReqScoped.getPropertiesMap().keySet().toArray());
 		ObjectNode response = JackJsonUtils.createNewNode();
 		JackJsonUtils.put(response, "configuration-tree",tree);
@@ -52,14 +52,14 @@ public class ZookeeperControllerReqScopedConfigProperties implements Serializabl
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getParametersTree() throws Exception {
+	public String getParametersTree() throws  ConfigPropertiesException, JsonProcessingException{
 		return JackJsonUtils.entityToJsonString(zookeeperServicePropertiesReqScoped.getPropertiesMap());
 	}
 	
 	@GET
 	@Path("/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getInfo(@PathParam("key") String key) throws Exception {
+	public String getInfo(@PathParam("key") String key) throws ConfigPropertiesException, JsonProcessingException {
 		String keyValue = zookeeperServicePropertiesReqScoped.getPropertyValue(key);
 		return JackJsonUtils.createJsonLine(key, keyValue);
 	}
