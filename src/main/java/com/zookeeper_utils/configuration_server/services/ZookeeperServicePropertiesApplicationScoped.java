@@ -4,6 +4,9 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepositoryInterface;
@@ -30,6 +33,8 @@ import com.zookeeper_utils.configuration_server.services.annotations.ZKServicePr
 	@Inject
 	@ZKReopositoryWatcher
 	private ZookeeperRepositoryInterface zc;
+	@Inject
+	private ServletContext context;
 	/**
 	 * Return the value for the keyPath informed.
 	 * 
@@ -38,9 +43,12 @@ import com.zookeeper_utils.configuration_server.services.annotations.ZKServicePr
 	 * @throws ConfigPropertiesException 
 	 * @throws Exception 
 	 */
-	//TODO adjust the class to get value from the local properties Map
     public String getPropertyValue(String keyPath) throws ConfigPropertiesException {
-    	return zc.getValueFromKeyPath(keyPath);
+    	if (this.properties==null) {
+    		this.properties = this.zc.getKeyPathTree(); 
+    	}
+    	String realContext = StringUtils.join("/",context.getServletContextName(),keyPath);
+    	return properties.get(realContext);
     }
      
     /**

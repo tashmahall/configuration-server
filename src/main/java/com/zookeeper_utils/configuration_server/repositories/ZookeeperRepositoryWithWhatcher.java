@@ -25,6 +25,7 @@ public class ZookeeperRepositoryWithWhatcher implements ZookeeperRepositoryInter
 	 * 
 	 */
 	public static final RetryPolicy RETRY_POLICY = new RetryNTimes(0, 60000);
+	private String gotError = "Got the error ";
 	public static final String CONFIGURATION_TREE = "configurationTree";
 	
 	@Inject
@@ -63,7 +64,7 @@ public class ZookeeperRepositoryWithWhatcher implements ZookeeperRepositoryInter
 			throw ce;
 		}
 		catch (Exception e1) {
-			throw new ConfigPropertiesException("Got the error "+e1.getMessage()+" while getting children properties to the 'keyPath' ["+context+"]",e1);
+			throw new ConfigPropertiesException(gotError+e1.getMessage()+" while getting children properties to the 'keyPath' ["+context+"]",e1);
 		}
 	}
 	private void defineWatcher(String context, Map<String, String> configurationMap, String newCtx) throws ConfigPropertiesException {
@@ -78,7 +79,7 @@ public class ZookeeperRepositoryWithWhatcher implements ZookeeperRepositoryInter
 				this.async.watched().checkExists().forPath(context).event().thenAccept(new ConfigurationEventWatcher(this.clientZookeeper,configurationMap));
 				this.async.watched().getChildren().forPath(context).event().thenAccept(new ConfigurationTreeWatcher(this.clientZookeeper,configurationMap));
 			} catch (Exception e) {
-				throw new ConfigPropertiesException("Got the error "+e.getMessage()+" while load the properties to the 'keyPath' ["+newCtx+"]",e);
+				throw new ConfigPropertiesException(gotError+e.getMessage()+" while load the properties to the 'keyPath' ["+newCtx+"]",e);
 			} 
 	}
 
