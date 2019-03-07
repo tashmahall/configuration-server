@@ -1,7 +1,6 @@
 package com.zookeeper_utils.configuration_server.controllers;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
@@ -13,10 +12,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jboss.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.properties.annotations.ConfigProperties;
 import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertiesInterface;
@@ -32,7 +30,6 @@ public class ZookeeperControllerAppScopedConfigProperties implements Serializabl
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Logger log = Logger.getLogger(this.getClass());
 	
 	@Inject
 	@ZKServicePropertiesAppScoped
@@ -41,17 +38,6 @@ public class ZookeeperControllerAppScopedConfigProperties implements Serializabl
 	@Inject
 	@ConfigProperties(keyPath="/appwithwatcher",configPropertyType=ZookeeperServicePropertyType.APPLICATION_SCOPED_WITH_WATCHER)
 	private String testeAppScopedWithWatcher;
-	
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getKeys() throws ConfigPropertiesException, JsonProcessingException  {
-		log.debug("teste_APPLICATION_SCOPED_WITH_WATCHER Working "+ testeAppScopedWithWatcher);
-		String tree = Arrays.toString( zcInstance.get().getPropertiesMap().keySet().toArray());
-		zcInstance.destroy(zcInstance.get());
-		ObjectNode response = JackJsonUtils.createNewNode();
-		JackJsonUtils.put(response, "configuration-tree",tree);
-		return JackJsonUtils.getString(response);
-	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -65,8 +51,9 @@ public class ZookeeperControllerAppScopedConfigProperties implements Serializabl
 	@Path("/{key}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getInfo(@PathParam("key") String key) throws ConfigPropertiesException, JsonProcessingException  {
-		String keyValue = zcInstance.get().getPropertyValue(key);
+		String realPath = StringUtils.join("/",key);
+		String keyValue = zcInstance.get().getPropertyValue(realPath);
 		zcInstance.destroy(zcInstance.get());
-		return JackJsonUtils.createJsonLine(key, keyValue);
+		return JackJsonUtils.createJsonLine(realPath, keyValue);
 	}
 }

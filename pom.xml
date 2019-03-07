@@ -68,15 +68,6 @@
 			<scope>provided</scope>
 			<version>3.0.1</version>
 		</dependency>
-        
-        <!-- REST -->
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<version>${version.resteasy}</version>
-			<scope>provided</scope>
-		</dependency>
-		
 		<!-- TEST -->		
 		<dependency>
 		    <groupId>junit</groupId>
@@ -84,7 +75,6 @@
 		    <version>4.12</version>
 		    <scope>test</scope>
 		</dependency>
-				
 		<dependency>
 		    <groupId>org.powermock</groupId>
 		    <artifactId>powermock-module-junit4</artifactId>
@@ -97,33 +87,57 @@
             <version>2.0.0</version>
             <scope>test</scope>
         </dependency>
-        <!--  -->		
+        <!-- REST -->
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>3.6.3.Final</version>
+			<scope>provided</scope>
+		</dependency>        
 		<dependency>
 		    <groupId>org.jboss.resteasy</groupId>
 		    <artifactId>resteasy-multipart-provider</artifactId>
-		    <version>${version.resteasy}</version>
+		    <version>3.6.3.Final</version>
 		    <scope>provided</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jackson-provider</artifactId>			
-			<version>${version.resteasy}</version>
+			<version>3.6.3.Final</version>
 			<scope>provided</scope>
 		</dependency>
-		
 		<dependency>
 		    <groupId>org.jboss.resteasy</groupId>
 		    <artifactId>resteasy-validator-provider-11</artifactId>
-		    <version>3.1.4.Final</version>
+		    <version>3.6.3.Final</version>
 		    <scope>provided</scope>
 		</dependency>
+		<dependency>
+		    <groupId>com.thoughtworks.paranamer</groupId>
+		    <artifactId>paranamer</artifactId>
+		    <version>2.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se-core</artifactId>
+			<version>3.1.0.Final</version>
+		</dependency>		
 		<!-- JACKSON -->
 		<dependency>
 		    <groupId>com.fasterxml.jackson.core</groupId>
 		    <artifactId>jackson-databind</artifactId>
 		    <version>2.9.8</version>
 		</dependency>
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-annotations</artifactId>
+		    <version>2.9.8</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		    <version>2.9.8</version>
+		</dependency>		
 		<!-- EJB -->
 		<dependency>
 			<groupId>org.jboss.ejb3</groupId>
@@ -136,73 +150,47 @@
 		    <artifactId>commons-collections4</artifactId>
 		    <version>4.1</version>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.google.auto.service/auto-service -->
-
-		
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-lang3</artifactId>
 		     <version>3.6</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.zookeeper/zookeeper -->
+		<!--ZOOKEEPER-->
 		<dependency>
 		    <groupId>org.apache.zookeeper</groupId>
 		    <artifactId>zookeeper</artifactId>
 		    <version>3.4.12</version>
 		    <type>pom</type>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.curator/curator-framework -->
 		<dependency>
 		    <groupId>org.apache.curator</groupId>
 		    <artifactId>curator-framework</artifactId>
 		    <version>4.1.0</version>
 		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/org.apache.curator/curator-client -->
 		<dependency>
 		    <groupId>org.apache.curator</groupId>
 		    <artifactId>curator-client</artifactId>
 		    <version>4.1.0</version>
 		</dependency>
-
        <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-recipes</artifactId>
             <version>4.1.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-test</artifactId>
             <version>4.1.0</version>
         </dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.github.lalyos/jfiglet -->
-		<dependency>
-		    <groupId>com.github.lalyos</groupId>
-		    <artifactId>jfiglet</artifactId>
-		    <version>0.0.8</version>
-		</dependency>
-
-
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-x-discovery</artifactId>
             <version>4.1.0</version>
         </dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.apache.curator/curator-x-async -->
 		<dependency>
 		    <groupId>org.apache.curator</groupId>
 		    <artifactId>curator-x-async</artifactId>
 		    <version>4.1.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.weld.se</groupId>
-			<artifactId>weld-se-core</artifactId>
-			<version>3.1.0.Final</version>
 		</dependency>
   </dependencies>
 </project>

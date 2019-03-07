@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,15 +39,6 @@ public class ZookeeperControllerReqScopedConfigPropertiesTest {
 		configurationMap.put("/zookeeper/first1/second1","test /zookeeper/first1/second1");
 	}
 
-	
-	@Test
-	public void testGetKeys() throws Exception {
-		String known= "{\"configuration-tree\":\"[/zookeeper/first1, /zookeeper/first1/second1, /zookeeper/first2]\"}";
-		when(zookeeperServicePropertiesReqScoped.getPropertiesMap()).thenReturn(configurationMap);
-		String test = sbv.getKeys();
-		assertEquals(known,test);
-	}
-
 	@Test
 	public void testGetParametersTree() throws Exception {
 		String known= "{\"/zookeeper/first1/second1\":\"test /zookeeper/first1/second1\",\"/zookeeper/first2\":\"test /zookeeper/first2\"}";
@@ -57,10 +49,10 @@ public class ZookeeperControllerReqScopedConfigPropertiesTest {
 
 	@Test
 	public void testGetInfo() throws Exception {
-		String keyPath = "/zookeeper/first2";
+		String keyPath = "zookeeper/first2";
 		String keyPathValue = "test /zookeeper/first2";
-		String known= JackJsonUtils.createJsonLine(keyPath, keyPathValue);
-		when(zookeeperServicePropertiesReqScoped.getPropertyValue(keyPath)).thenReturn(keyPathValue);
+		String known= JackJsonUtils.createJsonLine(StringUtils.join("/",keyPath), keyPathValue);
+		when(zookeeperServicePropertiesReqScoped.getPropertyValue(StringUtils.join("/",keyPath))).thenReturn(keyPathValue);
 		String test = sbv.getInfo(keyPath);
 		assertEquals(known,test);
 	}
