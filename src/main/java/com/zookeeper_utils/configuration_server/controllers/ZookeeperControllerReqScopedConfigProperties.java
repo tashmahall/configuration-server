@@ -1,7 +1,5 @@
 package com.zookeeper_utils.configuration_server.controllers;
 
-import java.io.Serializable;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -23,11 +21,7 @@ import com.zookeeper_utils.configuration_server.utils.JackJsonUtils;
 
 @Path("/parametrosReqScoped")
 @RequestScoped
-public class ZookeeperControllerReqScopedConfigProperties implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class ZookeeperControllerReqScopedConfigProperties{
 	
 	@Inject
 	@ZKServicePropertiesRequestScoped
