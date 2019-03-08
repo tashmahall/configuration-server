@@ -11,11 +11,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.retry.RetryNTimes;
 import org.apache.curator.x.async.AsyncCuratorFramework;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.annotations.SanitizeKeyPath;
+import com.zookeeper_utils.configuration_server.repositories.annotations.ZKConfigurationLoaderJbossGlobalBinds;
 import com.zookeeper_utils.configuration_server.repositories.annotations.ZKReopositoryWatcher;
 import com.zookeeper_utils.configuration_server.watchers.ConfigurationEventWatcher;
 import com.zookeeper_utils.configuration_server.watchers.ConfigurationTreeWatcher;
@@ -27,22 +29,22 @@ public class ZookeeperRepositoryWithWhatcher implements ZookeeperRepositoryInter
 	public static final RetryPolicy RETRY_POLICY = new RetryNTimes(0, 60000);
 	private String gotError = "Got the error ";
 	public static final String CONFIGURATION_TREE = "configurationTree";
-	
+	@Inject
+	@ZKConfigurationLoaderJbossGlobalBinds
+	private ZookeeperConfigurationLoader zcl;
 	@Inject
 	private ServletContext context;	
 	private CuratorFramework clientZookeeper;
 	private AsyncCuratorFramework async;
 	private Map<String,String> configurationMap;
 	
-    public ZookeeperRepositoryWithWhatcher () throws ConfigPropertiesException {
-    	clientZookeeper = CuratorFrameworkFactory.newClient(loadHostAndPort(), RETRY_POLICY);
-    	async = AsyncCuratorFramework.wrap(clientZookeeper);
-    	clientZookeeper.start(); 
+    public ZookeeperRepositoryWithWhatcher () {
     }
 
     @Override
 	public Map<String, String> getKeyPathTree() throws ConfigPropertiesException {
-		configurationMap = new TreeMap<>();
+    	loadClientZookeeper();
+    	configurationMap = new TreeMap<>();
 		String realContext = "/"+context.getServletContextName();
 		this.treeGenerator(realContext, configurationMap);
 		return configurationMap;
@@ -85,13 +87,20 @@ public class ZookeeperRepositoryWithWhatcher implements ZookeeperRepositoryInter
 
 	@Override
 	public String getValueFromKeyPath(@SanitizeKeyPath String keyPath) throws ConfigPropertiesException {
+		loadClientZookeeper();
 		String realKeyPath = StringUtils.join("/",context.getServletContextName(),keyPath);
 		if(configurationMap ==null ) {
 			getKeyPathTree();
 		} 
 		return configurationMap.get(realKeyPath);
 	}
-
+	private void loadClientZookeeper() throws ConfigPropertiesException {
+    	if(clientZookeeper==null||clientZookeeper.getState().equals(CuratorFrameworkState.STOPPED)) {
+    		clientZookeeper = CuratorFrameworkFactory.newClient(zcl.loadHostAndPort(), RETRY_POLICY);
+    		async = AsyncCuratorFramework.wrap(clientZookeeper);
+        	clientZookeeper.start(); 
+    	}
+	}
 }
 
 

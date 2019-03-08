@@ -1,19 +1,36 @@
 package com.zookeeper_utils.configuration_server.repositories;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.CompletionStage;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 
+import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.api.GetChildrenBuilder;
 import org.apache.curator.framework.api.GetDataBuilder;
+import org.apache.curator.framework.imps.CuratorFrameworkState;
+import org.apache.curator.x.async.AsyncCuratorFramework;
+import org.apache.curator.x.async.AsyncStage;
+import org.apache.curator.x.async.api.AsyncExistsBuilder;
+import org.apache.curator.x.async.api.AsyncGetChildrenBuilder;
+import org.apache.curator.x.async.api.WatchableAsyncCuratorFramework;
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.data.Stat;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,16 +39,18 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
+import com.zookeeper_utils.configuration_server.watchers.ConfigurationEventWatcher;
+import com.zookeeper_utils.configuration_server.watchers.ConfigurationTreeWatcher;
 
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(value= {CuratorFrameworkFactory.class,AsyncCuratorFramework.class})
 public class ZookeeperRepositoryWithWhatcherTest {
 	@InjectMocks
-	@Spy
 	private ZookeeperRepositoryWithWhatcher sbv;
 	@Mock
 	private CuratorFramework clientZookeeper;
@@ -41,6 +60,27 @@ public class ZookeeperRepositoryWithWhatcherTest {
 	private GetChildrenBuilder getChildrenBuilder;
 	@Mock
 	private GetDataBuilder getDataBuilder;
+	@Mock
+	private InitialContext initiaContext;
+	@Mock
+	private AsyncCuratorFramework async;
+	@Mock
+	private	ZookeeperConfigurationLoader zcl;
+	@Mock
+	private WatchableAsyncCuratorFramework wacf;
+	@Mock
+	private AsyncExistsBuilder aeb;
+	@Mock
+	private AsyncStage<Stat> as;
+	@Mock
+	private CompletionStage<WatchedEvent> csWatched;
+	@Mock
+	private CompletionStage<Void> csVoid;
+	@Mock
+	private AsyncGetChildrenBuilder agcb;	
+	@Mock
+	private AsyncStage<List<String>> asList;
+	
 	
 	private Map<String,String> configurationMap ;
 	
@@ -48,12 +88,28 @@ public class ZookeeperRepositoryWithWhatcherTest {
     public ExpectedException thrown = ExpectedException.none();
 	
 	@Before
-	public void loadConfigurationMap() {
+	public void loadConfigurationMap() throws NamingException, ConfigPropertiesException {
+		String connectioZookeeper="anstsagatha.ans.gov.br:2181";
 		configurationMap = new TreeMap<String,String>();
 		configurationMap.put("/zookeeper/first1", null);
 		configurationMap.put("/zookeeper/first2","test /zookeeper/first2");
 		configurationMap.put("/zookeeper/first1/second1","test /zookeeper/first1/second1");
 		MockitoAnnotations.initMocks(this);
+		mockStatic(CuratorFrameworkFactory.class);
+		mockStatic(AsyncCuratorFramework.class);
+		when(CuratorFrameworkFactory.newClient(eq(connectioZookeeper),any(RetryPolicy.class))).thenReturn(clientZookeeper);
+		when(AsyncCuratorFramework.wrap(clientZookeeper)).thenReturn(async);
+		when(zcl.loadHostAndPort()).thenReturn(connectioZookeeper);
+		when(async.watched()).thenReturn(wacf);
+		when(wacf.checkExists()).thenReturn(aeb);
+		when(aeb.forPath(anyString())).thenReturn(as);
+		when(as.event()).thenReturn(csWatched);
+		when(csWatched.thenAccept(any(ConfigurationEventWatcher.class))).thenReturn(csVoid);
+		when(wacf.getChildren()).thenReturn(agcb);
+		when(agcb.forPath(anyString())).thenReturn(asList);
+		when(asList.event()).thenReturn(csWatched);
+		this.async.watched().getChildren().forPath("").event().thenAccept(new ConfigurationTreeWatcher(this.clientZookeeper,configurationMap));
+
 	}
 	@Test
 	public void testGetKeyPathTree() throws Exception {
@@ -66,6 +122,7 @@ public class ZookeeperRepositoryWithWhatcherTest {
 		byte[] test$zookeeper$f1$s1= "test /zookeeper/first1/second1".getBytes();
 		List<String> list1 = Arrays.asList("first1","first2");
 		List<String> list2 = Arrays.asList("second1"); 
+		when(clientZookeeper.getState()).thenReturn(CuratorFrameworkState.STOPPED);
 		when(context.getServletContextName()).thenReturn(zookeeper);
 		when(clientZookeeper.getChildren()).thenReturn(getChildrenBuilder);
 		when(clientZookeeper.getChildren().forPath($zookeeper)).thenReturn(list1);
@@ -88,6 +145,7 @@ public class ZookeeperRepositoryWithWhatcherTest {
 		String $zookeeper = "/"+zookeeper;
 		String $zookeeper$first1= $zookeeper+"/"+"first1";
 		List<String> list1 = Arrays.asList("first1");
+		when(clientZookeeper.getState()).thenReturn(CuratorFrameworkState.STOPPED);
 		when(context.getServletContextName()).thenReturn(zookeeper);
 		when(clientZookeeper.getChildren()).thenReturn(getChildrenBuilder);
 		when(clientZookeeper.getChildren().forPath($zookeeper)).thenReturn(list1);
@@ -105,6 +163,7 @@ public class ZookeeperRepositoryWithWhatcherTest {
 		String $zookeeper = "/"+zookeeper;
 		String $zookeeper$first1= $zookeeper+"/"+"first1";
 		List<String> list1 = Arrays.asList("first1");
+		when(clientZookeeper.getState()).thenReturn(CuratorFrameworkState.STOPPED);
 		when(context.getServletContextName()).thenReturn(zookeeper);
 		when(clientZookeeper.getChildren()).thenReturn(getChildrenBuilder);
 		when(clientZookeeper.getChildren().forPath($zookeeper)).thenReturn(list1);
@@ -118,6 +177,7 @@ public class ZookeeperRepositoryWithWhatcherTest {
 	public void testExceptionTreeGeneratorWatcherGetKeyPathTree() throws Exception {
 		String zookeeper = "zookeeper";
 		String $zookeeper = "/"+zookeeper;
+		when(clientZookeeper.getState()).thenReturn(CuratorFrameworkState.STOPPED);
 		when(context.getServletContextName()).thenReturn(zookeeper);
 		when(clientZookeeper.getChildren()).thenReturn(getChildrenBuilder);
 		when(clientZookeeper.getChildren().forPath($zookeeper)).thenThrow(new Exception());
@@ -133,6 +193,7 @@ public class ZookeeperRepositoryWithWhatcherTest {
 		String $zookeeper$first1= $zookeeper+"/"+"first1";
 		List<String> list1 = Arrays.asList("first1","first2");
 		List<String> list2 = Arrays.asList("second1"); 
+		when(clientZookeeper.getState()).thenReturn(CuratorFrameworkState.STOPPED);
 		when(context.getServletContextName()).thenReturn(zookeeper);
 		when(clientZookeeper.getChildren()).thenReturn(getChildrenBuilder);
 		when(clientZookeeper.getChildren().forPath($zookeeper)).thenReturn(list1);
@@ -155,6 +216,7 @@ public class ZookeeperRepositoryWithWhatcherTest {
 		byte[] test$zookeeper$f1$s1= "test /zookeeper/first1/second1".getBytes();
 		List<String> list1 = Arrays.asList("first1","first2");
 		List<String> list2 = Arrays.asList("second1"); 
+		when(clientZookeeper.getState()).thenReturn(CuratorFrameworkState.STOPPED);
 		when(context.getServletContextName()).thenReturn(zookeeper);
 		when(clientZookeeper.getChildren()).thenReturn(getChildrenBuilder);
 		when(clientZookeeper.getChildren().forPath($zookeeper)).thenReturn(list1);

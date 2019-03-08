@@ -9,10 +9,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.retry.RetryNTimes;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.annotations.SanitizeKeyPath;
+import com.zookeeper_utils.configuration_server.repositories.annotations.ZKConfigurationLoaderJbossGlobalBinds;
 import com.zookeeper_utils.configuration_server.repositories.annotations.ZKNoWatcherKeyPathTreeGenerator;
 import com.zookeeper_utils.configuration_server.repositories.annotations.ZKReopositoryNoWatcher;
 
@@ -27,14 +29,16 @@ public class ZookeeperRepositoryWithoutWatcher implements ZookeeperRepositoryInt
 	@Inject
 	private ServletContext context;	
 	@Inject
+	@ZKConfigurationLoaderJbossGlobalBinds
+	private ZookeeperConfigurationLoader zcl;
+	@Inject
 	@ZKNoWatcherKeyPathTreeGenerator
 	private ZookeeperKeyPathGenerator zri;
 	private CuratorFramework clientZookeeper;
-	public ZookeeperRepositoryWithoutWatcher () throws ConfigPropertiesException {
-    	clientZookeeper = CuratorFrameworkFactory.newClient(loadHostAndPort(), RETRY_POLICY);
-    	clientZookeeper.start(); 
+	public ZookeeperRepositoryWithoutWatcher () {
 	}
 	public String getValueFromKeyPath(@SanitizeKeyPath String keyPath) throws ConfigPropertiesException  {
+		loadClientZookeeper();
 		String realKeyPath =StringUtils.join("/",context.getServletContextName(),keyPath);
 		try {
 			return new String (this.clientZookeeper.getData().forPath(realKeyPath));
@@ -43,7 +47,14 @@ public class ZookeeperRepositoryWithoutWatcher implements ZookeeperRepositoryInt
 		}
 	}
 	public Map<String,String> getKeyPathTree() throws ConfigPropertiesException{
+		loadClientZookeeper();
 		String realcontextName ="/"+context.getServletContextName();
 		return zri.getKeyPathTree(realcontextName, clientZookeeper);
+	}
+	private void loadClientZookeeper() throws ConfigPropertiesException {
+    	if(clientZookeeper==null||clientZookeeper.getState().equals(CuratorFrameworkState.STOPPED)) {
+    		clientZookeeper = CuratorFrameworkFactory.newClient(zcl.loadHostAndPort(), RETRY_POLICY);
+        	clientZookeeper.start(); 
+    	}
 	}
 }
