@@ -50,7 +50,8 @@ public @interface ConfigProperties {
 	 * <b>ZookeeperServicePropertyType.GLOBAL_CONTEXT_NO_WATCHER</b>
 	 * 	In this case the Zookeeper get the 'keyPath' value from the Global context in the Configuration server
 	 *  each time that is required and doesn't create Watchers to watch changes happened over the 'keyPath' value.  
-	 *
+	 * 
+	 *  @return the 'configPropertyType'.
 	 */
 	@Nonbinding	
 	 public ZookeeperServicePropertyType configPropertyType() default ZookeeperServicePropertyType.REQUEST_SCOPED_NO_WATCHER;
