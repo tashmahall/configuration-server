@@ -35,9 +35,6 @@ public class ZookeeperGlobalRepositoryWithoutWatcher implements ZookeeperReposit
 	private ZookeeperKeyPathGenerator zri;
 	private CuratorFramework clientZookeeper;
 
-	public ZookeeperGlobalRepositoryWithoutWatcher () throws ConfigPropertiesException {
-
-	}
 	public String getValueFromKeyPath(@SanitizeKeyPath String keyPath) throws ConfigPropertiesException  {
 		loadClientZookeeper();
 		String realKeyPath = StringUtils.join("/",globalRepository,keyPath);

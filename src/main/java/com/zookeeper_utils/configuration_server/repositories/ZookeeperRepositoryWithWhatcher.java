@@ -38,8 +38,6 @@ public class ZookeeperRepositoryWithWhatcher implements ZookeeperRepositoryInter
 	private AsyncCuratorFramework async;
 	private Map<String,String> configurationMap;
 	
-    public ZookeeperRepositoryWithWhatcher () {
-    }
 
     @Override
 	public Map<String, String> getKeyPathTree() throws ConfigPropertiesException {
