@@ -20,6 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepositoryInterface;
+import com.zookeeper_utils.configuration_server.service.ZookeeperServicePropertiesApplicationScoped;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ZookeeperServicePropertiesApplicationScopedPropertiesNullTest {

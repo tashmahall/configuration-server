@@ -1,10 +1,12 @@
-package com.zookeeper_utils.configuration_server.controllers;
+package com.zookeeper_utils.configuration_server.rest;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.Map;
 import java.util.TreeMap;
+
+import javax.enterprise.inject.Instance;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -15,15 +17,19 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertiesInterface;
+import com.zookeeper_utils.configuration_server.rest.ZookeeperControllerGlobalReqScopedConfigProperties;
+import com.zookeeper_utils.configuration_server.service.ZookeeperServicePropertiesInterface;
 import com.zookeeper_utils.configuration_server.utils.JackJsonUtils;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ZookeeperControllerReqScopedConfigPropertiesTest {
+public class ZookeeperControllerGlobalReqScopedConfigPropertiesTest {
 
 	@Spy
 	@InjectMocks
-	private ZookeeperControllerReqScopedConfigProperties sbv;
+	private ZookeeperControllerGlobalReqScopedConfigProperties sbv;
+	
+	@Mock
+	private	Instance<ZookeeperServicePropertiesInterface> zcInstance;
 	
 	@Mock
 	private ZookeeperServicePropertiesInterface zookeeperServicePropertiesReqScoped;
@@ -33,6 +39,7 @@ public class ZookeeperControllerReqScopedConfigPropertiesTest {
 	
 	@Before
 	public void load() {
+		when(zcInstance.get()).thenReturn(zookeeperServicePropertiesReqScoped);
 		configurationMap = new TreeMap<String,String>();
 		configurationMap.put("/zookeeper/first1", null);
 		configurationMap.put("/zookeeper/first2","test /zookeeper/first2");

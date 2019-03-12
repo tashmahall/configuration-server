@@ -8,10 +8,9 @@ import com.zookeeper_utils.configuration_server.repositories.annotations.ZKConfi
 @ZKConfigurationLoaderZookeeperPropertiesFile
 public class ZookeeperConfigurationLoaderZookeeperPropertiesFile implements ZookeeperConfigurationLoader{
 	public String loadHostAndPort() throws ConfigPropertiesException {
-		String fileName = "zookeeper.properties";
-		Properties properties = new Properties();
+
 		try {
-			properties.load(ZookeeperRepositoryInterface.class.getClassLoader().getResourceAsStream(fileName));
+			Properties properties = ZookeeperLoadConfiguration.getProperties();
 			String host = properties.getProperty("zookeeper.host");
 			String port = properties.getProperty("zookeeper.port");
 			return host+":"+port;

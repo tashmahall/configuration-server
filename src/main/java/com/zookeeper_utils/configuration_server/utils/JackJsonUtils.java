@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JackJsonUtils {
 	private JackJsonUtils() {}
-
+	
 	private static ObjectMapper objectMapper = init();
 	public static ObjectMapper init() {
 		ObjectMapper om = new ObjectMapper();

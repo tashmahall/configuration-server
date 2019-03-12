@@ -18,10 +18,10 @@ import org.apache.curator.x.async.AsyncCuratorFramework;
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.annotations.SanitizeKeyPath;
 import com.zookeeper_utils.configuration_server.repositories.annotations.ZKConfigurationLoaderJbossGlobalBinds;
-import com.zookeeper_utils.configuration_server.repositories.annotations.ZKReopositoryWatcher;
-import com.zookeeper_utils.configuration_server.watchers.ConfigurationEventWatcher;
-import com.zookeeper_utils.configuration_server.watchers.ConfigurationTreeWatcher;
-@ZKReopositoryWatcher
+import com.zookeeper_utils.configuration_server.repositories.annotations.ZKReopositoryWithWatcher;
+import com.zookeeper_utils.configuration_server.repositories.watchers.ConfigurationEventWatcher;
+import com.zookeeper_utils.configuration_server.repositories.watchers.ConfigurationTreeWatcher;
+@ZKReopositoryWithWatcher
 public class ZookeeperRepositoryWithWhatcher implements ZookeeperRepositoryInterface {
 	/**
 	 * 
@@ -38,7 +38,6 @@ public class ZookeeperRepositoryWithWhatcher implements ZookeeperRepositoryInter
 	private AsyncCuratorFramework async;
 	private Map<String,String> configurationMap;
 	
-
     @Override
 	public Map<String, String> getKeyPathTree() throws ConfigPropertiesException {
     	loadClientZookeeper();

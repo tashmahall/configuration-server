@@ -12,6 +12,7 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
+import com.zookeeper_utils.configuration_server.repositories.validations.SanitezeFirstSlashValidation;
 @RunWith(MockitoJUnitRunner.class)
 public class SanitizeFirstSlashValidationTest {
 	@InjectMocks

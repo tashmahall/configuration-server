@@ -1,4 +1,4 @@
-package com.zookeeper_utils.configuration_server.controllers;
+package com.zookeeper_utils.configuration_server.rest;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -17,7 +17,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertiesInterface;
+import com.zookeeper_utils.configuration_server.rest.ZookeeperControllerAppScopedConfigProperties;
+import com.zookeeper_utils.configuration_server.service.ZookeeperServicePropertiesInterface;
 import com.zookeeper_utils.configuration_server.utils.JackJsonUtils;
 
 @RunWith(MockitoJUnitRunner.class)

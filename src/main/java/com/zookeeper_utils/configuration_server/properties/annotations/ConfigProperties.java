@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 import javax.enterprise.util.Nonbinding;
 import javax.inject.Qualifier;
 
-import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertyType;
+import com.zookeeper_utils.configuration_server.service.ZookeeperServicePropertyType;
 
 /**
  * 
@@ -34,7 +34,7 @@ public @interface ConfigProperties {
 	 * @return the 'keyPath' Value. 
 	 */
 	@Nonbinding
-	public String keyPath() ;
+	public String value() ;
 	/**
 	 * The {@link ZookeeperServicePropertyType} define the strategy that will be used to get the 'keyPath' value.
 	 * <b>ZookeeperServicePropertyType.REQUEST_SCOPED_NO_WATCHER</b>
@@ -50,8 +50,8 @@ public @interface ConfigProperties {
 	 * <b>ZookeeperServicePropertyType.GLOBAL_CONTEXT_NO_WATCHER</b>
 	 * 	In this case the Zookeeper get the 'keyPath' value from the Global context in the Configuration server
 	 *  each time that is required and doesn't create Watchers to watch changes happened over the 'keyPath' value.  
-	 * 
-	 *  @return the 'configPropertyType'.
+	 *	
+	 * @return the 'configPropertyType'.
 	 */
 	@Nonbinding	
 	 public ZookeeperServicePropertyType configPropertyType() default ZookeeperServicePropertyType.REQUEST_SCOPED_NO_WATCHER;

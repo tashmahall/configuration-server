@@ -24,6 +24,8 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
+import com.zookeeper_utils.configuration_server.repositories.ZookeeperKeyPathGenerator;
+import com.zookeeper_utils.configuration_server.repositories.ZookeeperNoWatcherKeyPathTreeGenerator;
 
 
 @RunWith(MockitoJUnitRunner.class)

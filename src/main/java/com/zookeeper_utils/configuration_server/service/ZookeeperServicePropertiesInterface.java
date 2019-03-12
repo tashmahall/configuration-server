@@ -1,4 +1,4 @@
-package com.zookeeper_utils.configuration_server.services;
+package com.zookeeper_utils.configuration_server.service;
 
 import java.util.Map;
 

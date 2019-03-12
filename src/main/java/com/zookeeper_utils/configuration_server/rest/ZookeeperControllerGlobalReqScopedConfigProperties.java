@@ -1,7 +1,6 @@
-package com.zookeeper_utils.configuration_server.controllers;
+package com.zookeeper_utils.configuration_server.rest;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
@@ -16,39 +15,31 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
-import com.zookeeper_utils.configuration_server.properties.annotations.ConfigProperties;
-import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertiesInterface;
-import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertyType;
-import com.zookeeper_utils.configuration_server.services.annotations.ZKServicePropertiesAppScoped;
+import com.zookeeper_utils.configuration_server.service.ZookeeperServicePropertiesInterface;
+import com.zookeeper_utils.configuration_server.service.annotations.ZKServicePropertiesGlobalRequestScoped;
 import com.zookeeper_utils.configuration_server.utils.JackJsonUtils;
 
-
-@Path("/parametrosAppScoped")
+@Path("/parametrosGlobalReq")
 @RequestScoped
-public class ZookeeperControllerAppScopedConfigProperties implements Serializable{
+public class ZookeeperControllerGlobalReqScopedConfigProperties implements Serializable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
 	@Inject
-	@ZKServicePropertiesAppScoped
+	@ZKServicePropertiesGlobalRequestScoped
 	private	Instance<ZookeeperServicePropertiesInterface> zcInstance;
-	
-	@Inject
-	@ConfigProperties(keyPath="/appwithwatcher",configPropertyType=ZookeeperServicePropertyType.APPLICATION_SCOPED_WITH_WATCHER)
-	private String testeAppScopedWithWatcher;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getParametersTree() throws ConfigPropertiesException, JsonProcessingException  {
-		Map<String,String> map=	zcInstance.get().getPropertiesMap();
-		zcInstance.destroy(zcInstance.get());
-		return JackJsonUtils.entityToJsonString(map);
+		return JackJsonUtils.entityToJsonString(zcInstance.get().getPropertiesMap());
 	}
 	
 	@GET
 	@Path("/{key}")
+//	@Path("{param:.*}/*")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getInfo(@PathParam("key") String key) throws ConfigPropertiesException, JsonProcessingException  {
 		String realPath = StringUtils.join("/",key);

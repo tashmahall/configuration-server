@@ -1,8 +1,8 @@
 package com.zookeeper_utils.configuration_server.properties;
 
-import static com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertyType.APPLICATION_SCOPED_WITH_WATCHER;
-import static com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertyType.GLOBAL_CONTEXT_NO_WATCHER;
-import static com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertyType.REQUEST_SCOPED_NO_WATCHER;
+import static com.zookeeper_utils.configuration_server.service.ZookeeperServicePropertyType.APPLICATION_SCOPED_WITH_WATCHER;
+import static com.zookeeper_utils.configuration_server.service.ZookeeperServicePropertyType.GLOBAL_CONTEXT_NO_WATCHER;
+import static com.zookeeper_utils.configuration_server.service.ZookeeperServicePropertyType.REQUEST_SCOPED_NO_WATCHER;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -21,8 +21,9 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
+import com.zookeeper_utils.configuration_server.properties.ConfigPropertiesFactory;
 import com.zookeeper_utils.configuration_server.properties.annotations.ConfigProperties;
-import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertiesInterface;
+import com.zookeeper_utils.configuration_server.service.ZookeeperServicePropertiesInterface;
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigPropertiesFactoryTest {
 	@Spy
@@ -75,7 +76,7 @@ public class ConfigPropertiesFactoryTest {
 	public void testProduceGlobalContext() throws ConfigPropertiesException {
 		when(injectionPoint.getAnnotated()).thenReturn(annotated);
 		when(annotated.getAnnotation(ConfigProperties.class)).thenReturn(configProperties);
-		when(configProperties.keyPath()).thenReturn(keyPath);
+		when(configProperties.value()).thenReturn(keyPath);
 		when(configProperties.configPropertyType()).thenReturn(GLOBAL_CONTEXT_NO_WATCHER);
 		when(zcInstanceServiceGlobalReqScoped.getPropertyValue(keyPath)).thenReturn(value);
 		String test = sbv.produce(injectionPoint);
@@ -86,7 +87,7 @@ public class ConfigPropertiesFactoryTest {
 	public void testProduceReqScopedNoWatcher() throws ConfigPropertiesException {
 		when(injectionPoint.getAnnotated()).thenReturn(annotated);
 		when(annotated.getAnnotation(ConfigProperties.class)).thenReturn(configProperties);
-		when(configProperties.keyPath()).thenReturn(keyPath);
+		when(configProperties.value()).thenReturn(keyPath);
 		when(configProperties.configPropertyType()).thenReturn(REQUEST_SCOPED_NO_WATCHER);
 		when(zcInstanceServiceReqScoped.getPropertyValue(keyPath)).thenReturn(value);
 		String test = sbv.produce(injectionPoint);
@@ -96,7 +97,7 @@ public class ConfigPropertiesFactoryTest {
 	public void testProduceAppScopedWithWatcher() throws ConfigPropertiesException {
 		when(injectionPoint.getAnnotated()).thenReturn(annotated);
 		when(annotated.getAnnotation(ConfigProperties.class)).thenReturn(configProperties);
-		when(configProperties.keyPath()).thenReturn(keyPath);
+		when(configProperties.value()).thenReturn(keyPath);
 		when(configProperties.configPropertyType()).thenReturn(APPLICATION_SCOPED_WITH_WATCHER);
 		when(zcInstanceServiceAppScoped.getPropertyValue(keyPath)).thenReturn(value);
 		String test = sbv.produce(injectionPoint);

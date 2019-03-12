@@ -30,12 +30,15 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
+import com.zookeeper_utils.configuration_server.repositories.ZookeeperConfigurationLoader;
+import com.zookeeper_utils.configuration_server.repositories.ZookeeperKeyPathGenerator;
+import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepositoryGlobalWithoutWatcher;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(CuratorFrameworkFactory.class)
 public class ZookeeperGlobalRepositoryWithoutWhatcherTest {
 	@InjectMocks
-	private ZookeeperGlobalRepositoryWithoutWatcher sbv;
+	private ZookeeperRepositoryGlobalWithoutWatcher sbv;
 	@Mock
 	private CuratorFramework clientZookeeper;
 	@Mock
@@ -66,13 +69,13 @@ public class ZookeeperGlobalRepositoryWithoutWhatcherTest {
 		when(CuratorFrameworkFactory.newClient(eq(connectioZookeeper),any(RetryPolicy.class))).thenReturn(clientZookeeper);
 		globalRepository = sbv.getContextNameRepository();
 		configurationMap = new TreeMap<String,String>();
-		configurationMap.put("/"+globalRepository+"/first1", null);
-		configurationMap.put("/"+globalRepository+"/first2","test /zookeeper/first2");
-		configurationMap.put("/"+globalRepository+"/first1/second1","test /zookeeper/first1/second1");
+		configurationMap.put(globalRepository+"/first1", null);
+		configurationMap.put(globalRepository+"/first2","test /zookeeper/first2");
+		configurationMap.put(globalRepository+"/first1/second1","test /zookeeper/first1/second1");
 	}
 	@Test
 	public void testGetKeyPathTree() throws Exception {
-		String $zookeeper = "/"+globalRepository;
+		String $zookeeper = globalRepository;
 		when(zri.getKeyPathTree(eq($zookeeper), any(CuratorFramework.class))).thenReturn(configurationMap);
 		when(clientZookeeper.getState()).thenReturn(CuratorFrameworkState.STOPPED);
 		Map<String,String> test =sbv.getKeyPathTree();
@@ -81,8 +84,7 @@ public class ZookeeperGlobalRepositoryWithoutWhatcherTest {
 
 	@Test
 	public void testGetValueFromKeyPath() throws Exception {
-		String zookeeper = globalRepository;
-		String $zookeeper = "/"+zookeeper;
+		String $zookeeper = globalRepository;
 		String $zookeeper$first1= $zookeeper+"/"+"first1";
 		String $zookeeper$first1$second1= $zookeeper$first1+"/"+"second1";
 		byte[] test$zookeeper$f1$s1= "test /zookeeper/first1/second1".getBytes();
@@ -94,8 +96,7 @@ public class ZookeeperGlobalRepositoryWithoutWhatcherTest {
 	}
 	@Test
 	public void testGetValueFromKeyPathException() throws Exception {
-		String zookeeper = globalRepository;
-		String $zookeeper = "/"+zookeeper;
+		String $zookeeper = globalRepository;
 		String $zookeeper$first1= $zookeeper+"/"+"first1";
 		String $zookeeper$first1$second1= $zookeeper$first1+"/"+"second1";
 		when(clientZookeeper.getState()).thenReturn(CuratorFrameworkState.STOPPED);

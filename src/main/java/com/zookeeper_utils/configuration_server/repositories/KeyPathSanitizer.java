@@ -26,7 +26,7 @@ public class KeyPathSanitizer implements Serializable{
 	
 	@AroundInvoke
 	public Object valid(InvocationContext ctx) throws ConfigPropertiesException {
-		return validate("/test");
+		return validate((String)ctx.getTarget());
 	}
 
 	private String validate(String keyPath) throws ConfigPropertiesException {

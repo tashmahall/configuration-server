@@ -11,10 +11,9 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
-import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepositoryWithoutWatcher;
+import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepositoryGlobalWithoutWatcher;
 /**
- * Inject the Zookeeper Repository with context properties {@link ZookeeperRepositoryWithoutWatcher} in this case, the repository create
- * watcher to watch properties changes.
+ * Inject the Zookeeper Repository with global properties {@link ZookeeperRepositoryGlobalWithoutWatcher}.
  * If the zookeeper.properties file doesn't exist it throws the exception {@link ConfigPropertiesException} notifying the problem.
  * 
  * 
@@ -25,6 +24,6 @@ import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepository
 @Qualifier
 @Retention(RUNTIME)
 @Target({ FIELD,TYPE })
-public @interface ZKReopositoryWatcher {
+public @interface ZKReopositoryGlobalNoWatcher {
 	
 }

@@ -1,7 +1,5 @@
 package com.zookeeper_utils.configuration_server.repositories.validations;
 
-import javax.validation.constraints.NotNull;
-
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 
 public abstract class AbstractSanitizeValidation {
@@ -13,7 +11,7 @@ public abstract class AbstractSanitizeValidation {
 	public AbstractSanitizeValidation(AbstractSanitizeValidation asv) {
 		this.next = asv;
 	}
-	public String validateKeyPath(@NotNull String keyPath) throws ConfigPropertiesException{
+	public String validateKeyPath(String keyPath) throws ConfigPropertiesException{
 		this.validationRule(keyPath);
 		if (next!=null) {
 			return next.validateKeyPath(keyPath);
@@ -22,6 +20,6 @@ public abstract class AbstractSanitizeValidation {
 		}
 	}
 	
-	public abstract void validationRule(@NotNull String keyPath) throws ConfigPropertiesException;
+	public abstract void validationRule(String keyPath) throws ConfigPropertiesException;
 
 }

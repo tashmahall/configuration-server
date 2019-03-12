@@ -1,6 +1,7 @@
-package com.zookeeper_utils.configuration_server.controllers;
+package com.zookeeper_utils.configuration_server.rest;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
@@ -15,39 +16,36 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
-import com.zookeeper_utils.configuration_server.properties.annotations.ConfigProperties;
-import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertiesInterface;
-import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertyType;
-import com.zookeeper_utils.configuration_server.services.annotations.ZKServicePropertiesGlobalRequestScoped;
+import com.zookeeper_utils.configuration_server.service.ZookeeperServicePropertiesInterface;
+import com.zookeeper_utils.configuration_server.service.annotations.ZKServicePropertiesAppScoped;
 import com.zookeeper_utils.configuration_server.utils.JackJsonUtils;
 
 
-@Path("/parametrosGlobalReq")
+@Path("/parametrosAppScoped")
 @RequestScoped
-public class ZookeeperControllerGlobalReqScopedConfigProperties implements Serializable{
+public class ZookeeperControllerAppScopedConfigProperties implements Serializable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
 	@Inject
-	@ZKServicePropertiesGlobalRequestScoped
+	@ZKServicePropertiesAppScoped
 	private	Instance<ZookeeperServicePropertiesInterface> zcInstance;
-	
-	@Inject
-	@ConfigProperties(keyPath="/globalrequest",configPropertyType=ZookeeperServicePropertyType.GLOBAL_CONTEXT_NO_WATCHER)
-	private String testeGlobalCtxNoWatcher;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getParametersTree() throws JsonProcessingException, ConfigPropertiesException {
-		return JackJsonUtils.entityToJsonString(zcInstance.get().getPropertiesMap());
+	public String getParametersTree() throws ConfigPropertiesException, JsonProcessingException  {
+		Map<String,String> map=	zcInstance.get().getPropertiesMap();
+		zcInstance.destroy(zcInstance.get());
+		return JackJsonUtils.entityToJsonString(map);
 	}
 	
 	@GET
 	@Path("/{key}")
+//	@Path("{param:.*}/*")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getInfo(@PathParam("key") String key) throws ConfigPropertiesException, JsonProcessingException {
+	public String getInfo(@PathParam("key") String key) throws ConfigPropertiesException, JsonProcessingException  {
 		String realPath = StringUtils.join("/",key);
 		String keyValue = zcInstance.get().getPropertyValue(realPath);
 		zcInstance.destroy(zcInstance.get());

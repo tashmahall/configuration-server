@@ -1,4 +1,4 @@
-package com.zookeeper_utils.configuration_server.services.annotations;
+package com.zookeeper_utils.configuration_server.service.annotations;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;
@@ -11,10 +11,10 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
-import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropertiesRequestScoped;
+import com.zookeeper_utils.configuration_server.service.ZookeeperServicePropertiesApplicationScoped;
 /**
- * Inject the Zookeeper Service layer with Request Scope {@link ZookeeperServicePropertiesRequestScoped}, in this case, 
- * the service layer uses an repository that does not create an watcher to watch properties changes.
+ * Inject the Zookeeper Service layer with Application Scope {@link ZookeeperServicePropertiesApplicationScoped}, in this case, 
+ * the service layer uses an repository that create watcher to watch properties changes.
  * 
  * 
  * @author igor.ferreia
@@ -24,6 +24,6 @@ import com.zookeeper_utils.configuration_server.services.ZookeeperServicePropert
 @Qualifier
 @Retention(RUNTIME)
 @Target({ TYPE, FIELD, PARAMETER })
-public @interface ZKServicePropertiesRequestScoped {
+public @interface ZKServicePropertiesAppScoped {
 
 }

@@ -1,4 +1,4 @@
-package com.zookeeper_utils.configuration_server.services;
+package com.zookeeper_utils.configuration_server.service;
 
 import java.util.Map;
 
@@ -7,8 +7,8 @@ import javax.inject.Inject;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepositoryInterface;
-import com.zookeeper_utils.configuration_server.repositories.annotations.ZKGlobalReopositoryNoWatcher;
-import com.zookeeper_utils.configuration_server.services.annotations.ZKServicePropertiesGlobalRequestScoped;
+import com.zookeeper_utils.configuration_server.repositories.annotations.ZKReopositoryGlobalNoWatcher;
+import com.zookeeper_utils.configuration_server.service.annotations.ZKServicePropertiesGlobalRequestScoped;
 
 
 /**
@@ -28,7 +28,7 @@ import com.zookeeper_utils.configuration_server.services.annotations.ZKServicePr
 	 */
 
 	@Inject
-	@ZKGlobalReopositoryNoWatcher
+	@ZKReopositoryGlobalNoWatcher
 	private ZookeeperRepositoryInterface zcInstance;
 	
 	/**
@@ -36,8 +36,7 @@ import com.zookeeper_utils.configuration_server.services.annotations.ZKServicePr
 	 * 
 	 * @param keyPath the key associated to a configuration property.
 	 * @return Property value
-	 * @throws ConfigPropertiesException 
-	 * @throws Exception 
+	 * @throws ConfigPropertiesException when there is a problem to return the 'keyPath' value.
 	 */
     public String getPropertyValue(String keyPath) throws ConfigPropertiesException {
     	return zcInstance.getValueFromKeyPath(keyPath);
@@ -49,7 +48,7 @@ import com.zookeeper_utils.configuration_server.services.annotations.ZKServicePr
      * <p>The properties Map is loaded in the order that are stored in the config server.</p>
      * 
      * @return properties Map 
-     * @throws ConfigPropertiesException 
+     * @throws ConfigPropertiesException when there is a problem to return the 'keyPathTree'.
      */
 	public Map<String, String> getPropertiesMap() throws ConfigPropertiesException {
 		return zcInstance.getKeyPathTree();

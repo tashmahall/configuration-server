@@ -14,19 +14,19 @@ import org.apache.curator.retry.RetryNTimes;
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.annotations.SanitizeKeyPath;
 import com.zookeeper_utils.configuration_server.repositories.annotations.ZKConfigurationLoaderJbossGlobalBinds;
-import com.zookeeper_utils.configuration_server.repositories.annotations.ZKGlobalReopositoryNoWatcher;
 import com.zookeeper_utils.configuration_server.repositories.annotations.ZKNoWatcherKeyPathTreeGenerator;
+import com.zookeeper_utils.configuration_server.repositories.annotations.ZKReopositoryGlobalNoWatcher;
 
 
-@ZKGlobalReopositoryNoWatcher
-public class ZookeeperGlobalRepositoryWithoutWatcher implements ZookeeperRepositoryInterface {
+@ZKReopositoryGlobalNoWatcher
+public class ZookeeperRepositoryGlobalWithoutWatcher implements ZookeeperRepositoryInterface {
 
 	/**
 	 * 
 	 */
 	public static final RetryPolicy RETRY_POLICY = new RetryNTimes(0, 60000);
 	private String gotError = "Got the error ";
-	private String globalRepository = "ans";
+	private String globalRepository = "/ans";
 	@Inject
 	@ZKConfigurationLoaderJbossGlobalBinds
 	private ZookeeperConfigurationLoader zcl;
@@ -37,7 +37,7 @@ public class ZookeeperGlobalRepositoryWithoutWatcher implements ZookeeperReposit
 
 	public String getValueFromKeyPath(@SanitizeKeyPath String keyPath) throws ConfigPropertiesException  {
 		loadClientZookeeper();
-		String realKeyPath = StringUtils.join("/",globalRepository,keyPath);
+		String realKeyPath = StringUtils.join(globalRepository,keyPath);
 		String value;
 		try {
 			value = new String (this.clientZookeeper.getData().forPath(realKeyPath));
@@ -48,8 +48,7 @@ public class ZookeeperGlobalRepositoryWithoutWatcher implements ZookeeperReposit
 	}
 	public Map<String,String> getKeyPathTree() throws ConfigPropertiesException{
 		loadClientZookeeper();
-		String realcontextName =StringUtils.join("/",globalRepository);
-		return zri.getKeyPathTree(realcontextName, clientZookeeper);
+		return zri.getKeyPathTree(globalRepository, clientZookeeper);
 	}
 	public String getContextNameRepository() {
 		return globalRepository;

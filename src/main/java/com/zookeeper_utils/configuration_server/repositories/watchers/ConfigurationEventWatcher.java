@@ -1,4 +1,4 @@
-package com.zookeeper_utils.configuration_server.watchers;
+package com.zookeeper_utils.configuration_server.repositories.watchers;
 
 import java.util.Map;
 import java.util.function.Consumer;

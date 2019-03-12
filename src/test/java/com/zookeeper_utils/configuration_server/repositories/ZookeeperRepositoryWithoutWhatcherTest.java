@@ -31,6 +31,9 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
+import com.zookeeper_utils.configuration_server.repositories.ZookeeperConfigurationLoader;
+import com.zookeeper_utils.configuration_server.repositories.ZookeeperKeyPathGenerator;
+import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepositoryWithoutWatcher;
 
 
 @RunWith(PowerMockRunner.class)
