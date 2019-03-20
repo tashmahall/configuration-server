@@ -8,6 +8,9 @@ import com.zookeeper_utils.configuration_server.repositories.annotations.Sanitiz
 
 public interface ZookeeperRepositoryInterface{
 	
-	public String getValueFromKeyPath(@SanitizeKeyPath String keyPath) throws ConfigPropertiesException;
-	public Map<String,String> getKeyPathTree() throws ConfigPropertiesException;
+	public String getValueFromKeyPathApplicationContext(@SanitizeKeyPath String keyPath) throws ConfigPropertiesException;
+	public Map<String,String> getKeyPathTreeApplicationContext() throws ConfigPropertiesException;
+	public String getValueFromKeyPathGlobalContext(@SanitizeKeyPath String keyPath) throws ConfigPropertiesException;
+	public Map<String,String> getKeyPathTreeGlobalContext() throws ConfigPropertiesException;
+	
 }

@@ -4,9 +4,6 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.repositories.ZookeeperRepositoryInterface;
@@ -29,53 +26,37 @@ import com.zookeeper_utils.configuration_server.service.annotations.ZKServicePro
 	/**
 	 * 
 	 */
-	private Map<String, String> properties;
 	@Inject
 	@ZKReopositoryWithWatcher
 	private ZookeeperRepositoryInterface zc;
-	@Inject
-	private ServletContext context;
 	/**
 	 * Return the value for the keyPath informed.
+	 * (Retorna o valor para o 'keyPath' informdo.)
 	 * 
-	 * @param keyPath the key associated to a configuration property.
+	 * @param keyPath the key associated to a configuration property (Chave associada a uma configuração).  
+	 * @param isGlobal the 'keyPath' informed is related to a configuration property in a global context. (A 'keyPath' está associada a uma configuração em contexto global).
 	 * @return Property value
 	 * @throws ConfigPropertiesException when there is a problem to return the 'keyPath' value.
 	 */
-    public String getPropertyValue(String keyPath) throws ConfigPropertiesException {
-    	if (this.properties==null) {
-    		this.properties = this.zc.getKeyPathTree(); 
+    public String getPropertyValue(String keyPath,boolean isGlobal) throws ConfigPropertiesException {
+    	if(isGlobal) {
+    		return zc.getValueFromKeyPathGlobalContext(keyPath);
     	}
-    	String realContext = StringUtils.join("/",context.getServletContextName(),keyPath);
-    	return properties.get(realContext);
+    	return zc.getValueFromKeyPathApplicationContext(keyPath);
     }
-    
     /**
      * Return the properties Map with the keyPaths and related values that there are in the config server.
-     * 
+     * (Retorna o Map de propriedades com os 'keyPaths' e valores relacionados que existem no config Server.)
      * <p>The properties Map is loaded in the order that are stored in the config server.</p>
+     * <p>(O Map de propriedades é carregado na ordem que foi guardado no Config Server).</p>
      * 
      * @return properties Map 
      * @throws ConfigPropertiesException when there is a problem to return the 'keyPathTree'.
      */
-	public Map<String, String> getPropertiesMap() throws ConfigPropertiesException {
-    	if (this.properties==null) {
-    		this.properties = this.zc.getKeyPathTree(); 
+	public Map<String, String> getPropertiesMap(boolean isGlobal) throws ConfigPropertiesException {
+    	if(isGlobal) {
+    		return zc.getKeyPathTreeGlobalContext();
     	}
-		return this.properties;
-
+    	return zc.getKeyPathTreeApplicationContext();
 	}
-    /**
-     * Even existing the watcher that leaves the properties Map updated, with this method is possible to reload all the properties Map at one time.
-     * 
-      * <p>The properties Map is loaded in the order that are stored in the config server.</p>
-     * 
-
-     * @return Properties Map
-     * @throws ConfigPropertiesException when there is a problem to return the 'keyPathTree'.
-     */
-    public Map<String,String> updateAllConfigurationTree() throws ConfigPropertiesException {
-    	this.properties = this.zc.getKeyPathTree();
-    	return this.properties;
-    }
 }

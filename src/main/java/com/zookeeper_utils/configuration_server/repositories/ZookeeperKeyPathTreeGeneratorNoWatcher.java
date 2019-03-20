@@ -7,9 +7,9 @@ import java.util.TreeMap;
 import org.apache.curator.framework.CuratorFramework;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
-import com.zookeeper_utils.configuration_server.repositories.annotations.ZKNoWatcherKeyPathTreeGenerator;
-@ZKNoWatcherKeyPathTreeGenerator
-public class ZookeeperNoWatcherKeyPathTreeGenerator implements ZookeeperKeyPathGenerator{
+import com.zookeeper_utils.configuration_server.repositories.annotations.ZKKeyPathTreeGeneratorNoWatcher;
+@ZKKeyPathTreeGeneratorNoWatcher
+class ZookeeperKeyPathTreeGeneratorNoWatcher implements ZookeeperKeyPathGenerator{
 	private String gotError = "Got the error ";
 	public Map<String,String> getKeyPathTree(String contextName,CuratorFramework clientZookeeper) throws ConfigPropertiesException{
 		Map<String,String> configurationMap = new TreeMap<>();

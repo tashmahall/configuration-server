@@ -14,6 +14,6 @@ import javax.inject.Qualifier;
 @Documented
 @Retention(RUNTIME)
 @Target({ TYPE, FIELD, PARAMETER })
-public @interface ZKNoWatcherKeyPathTreeGenerator {
+public @interface ZKKeyPathTreeGeneratorNoWatcher {
 
 }

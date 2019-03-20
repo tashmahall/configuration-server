@@ -49,7 +49,7 @@ public class ZookeeperControllerGlobalReqScopedConfigPropertiesTest {
 	@Test
 	public void testGetParametersTree() throws Exception {
 		String known= "{\"/zookeeper/first1/second1\":\"test /zookeeper/first1/second1\",\"/zookeeper/first2\":\"test /zookeeper/first2\"}";
-		when(zookeeperServicePropertiesReqScoped.getPropertiesMap()).thenReturn(configurationMap);
+		when(zookeeperServicePropertiesReqScoped.getPropertiesMap(true)).thenReturn(configurationMap);
 		String test = sbv.getParametersTree();
 		assertEquals(known,test);
 	}
@@ -59,7 +59,7 @@ public class ZookeeperControllerGlobalReqScopedConfigPropertiesTest {
 		String keyPath = "zookeeper/first2";
 		String keyPathValue = "test /zookeeper/first2";
 		String known= JackJsonUtils.createJsonLine(StringUtils.join("/",keyPath), keyPathValue);
-		when(zookeeperServicePropertiesReqScoped.getPropertyValue(StringUtils.join("/",keyPath))).thenReturn(keyPathValue);
+		when(zookeeperServicePropertiesReqScoped.getPropertyValue(StringUtils.join("/",keyPath),true)).thenReturn(keyPathValue);
 		String test = sbv.getInfo(keyPath);
 		assertEquals(known,test);
 	}

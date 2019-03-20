@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 import com.zookeeper_utils.configuration_server.service.ZookeeperServicePropertiesInterface;
-import com.zookeeper_utils.configuration_server.service.annotations.ZKServicePropertiesGlobalRequestScoped;
+import com.zookeeper_utils.configuration_server.service.annotations.ZKServicePropertiesRequestScoped;
 import com.zookeeper_utils.configuration_server.utils.JackJsonUtils;
 
 @Path("/parametrosGlobalReq")
@@ -28,13 +28,13 @@ public class ZookeeperControllerGlobalReqScopedConfigProperties implements Seria
 	private static final long serialVersionUID = 1L;
 	
 	@Inject
-	@ZKServicePropertiesGlobalRequestScoped
+	@ZKServicePropertiesRequestScoped
 	private	Instance<ZookeeperServicePropertiesInterface> zcInstance;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getParametersTree() throws ConfigPropertiesException, JsonProcessingException  {
-		return JackJsonUtils.entityToJsonString(zcInstance.get().getPropertiesMap());
+		return JackJsonUtils.entityToJsonString(zcInstance.get().getPropertiesMap(true));
 	}
 	
 	@GET
@@ -43,7 +43,7 @@ public class ZookeeperControllerGlobalReqScopedConfigProperties implements Seria
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getInfo(@PathParam("key") String key) throws ConfigPropertiesException, JsonProcessingException  {
 		String realPath = StringUtils.join("/",key);
-		String keyValue = zcInstance.get().getPropertyValue(realPath);
+		String keyValue = zcInstance.get().getPropertyValue(realPath,true);
 		zcInstance.destroy(zcInstance.get());
 		return JackJsonUtils.createJsonLine(realPath, keyValue);
 	}

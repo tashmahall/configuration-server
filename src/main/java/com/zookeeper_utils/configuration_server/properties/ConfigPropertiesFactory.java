@@ -10,11 +10,10 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
-import com.zookeeper_utils.configuration_server.properties.annotations.ConfigProperties;
+import com.zookeeper_utils.configuration_server.properties.annotations.ConfigProperty;
 import com.zookeeper_utils.configuration_server.service.ZookeeperServicePropertiesInterface;
-import com.zookeeper_utils.configuration_server.service.ZookeeperServicePropertyType;
+import com.zookeeper_utils.configuration_server.service.ZookeeperServiceScopeType;
 import com.zookeeper_utils.configuration_server.service.annotations.ZKServicePropertiesAppScoped;
-import com.zookeeper_utils.configuration_server.service.annotations.ZKServicePropertiesGlobalRequestScoped;
 import com.zookeeper_utils.configuration_server.service.annotations.ZKServicePropertiesRequestScoped;
 
 @RequestScoped
@@ -31,35 +30,20 @@ public class ConfigPropertiesFactory implements Serializable{
 	@ZKServicePropertiesRequestScoped
 	private	Instance<ZookeeperServicePropertiesInterface> zkServiceReqScoped;
 	
-	@Inject
-	@ZKServicePropertiesGlobalRequestScoped
-	private	Instance<ZookeeperServicePropertiesInterface>  zkServiceGlobalReqScoped;
-	
 	@Produces
-	@ConfigProperties(value = "")
+	@ConfigProperty(value = "")
 	public String produce(InjectionPoint injectionPoint) throws ConfigPropertiesException {
 		Annotated annotated = injectionPoint.getAnnotated();
-		ConfigProperties configProperties = annotated.getAnnotation(ConfigProperties.class);
+		ConfigProperty configProperties = annotated.getAnnotation(ConfigProperty.class);
 		String key = configProperties.value();
-		ZookeeperServicePropertyType zkspt = configProperties.configPropertyType();
+		boolean global = configProperties.global();
+		ZookeeperServiceScopeType zkspt = configProperties.scopeType();
 		switch (zkspt) {
-		case GLOBAL_CONTEXT_NO_WATCHER:
-			return getKeyValueGlobalContextNoWatcher(key);
-		case APPLICATION_SCOPED_WITH_WATCHER:
-			return getKeyValueAppScopedWithWatcher(key);
-		case REQUEST_SCOPED_NO_WATCHER:
+		case APPLICATION_SCOPED:
+			return zkServiceAppScoped.get().getPropertyValue(key, global);
+		case REQUEST_SCOPED:
 		default:
-			return getKeyValueReqScopedWithoutWatcher(key);
+			return zkServiceReqScoped.get().getPropertyValue(key, global);
 		}
-	}
-
-	private String getKeyValueGlobalContextNoWatcher(String key) throws ConfigPropertiesException {
-		return zkServiceGlobalReqScoped.get().getPropertyValue(key);
-	}
-	private String getKeyValueAppScopedWithWatcher(String key) throws ConfigPropertiesException {
-		return zkServiceAppScoped.get().getPropertyValue(key);
-	}
-	private String getKeyValueReqScopedWithoutWatcher(String key) throws ConfigPropertiesException {
-		return zkServiceReqScoped.get().getPropertyValue(key);
 	}
 }

@@ -27,7 +27,7 @@ public class ZookeeperControllerReqScopedConfigProperties{
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getParametersTree() throws ConfigPropertiesException, JsonProcessingException  {
-		return JackJsonUtils.entityToJsonString(zookeeperServicePropertiesReqScoped.getPropertiesMap());
+		return JackJsonUtils.entityToJsonString(zookeeperServicePropertiesReqScoped.getPropertiesMap(false));
 	}
 	
 	@GET
@@ -36,7 +36,7 @@ public class ZookeeperControllerReqScopedConfigProperties{
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getInfo(@PathParam("key") String key) throws ConfigPropertiesException, JsonProcessingException   {
 		String realPath = StringUtils.join("/",key);
-		String keyValue = zookeeperServicePropertiesReqScoped.getPropertyValue(realPath);
+		String keyValue = zookeeperServicePropertiesReqScoped.getPropertyValue(realPath,false);
 		return JackJsonUtils.createJsonLine(realPath, keyValue);
 	}
 }

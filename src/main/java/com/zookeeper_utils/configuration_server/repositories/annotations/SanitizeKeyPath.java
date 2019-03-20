@@ -14,12 +14,12 @@ import javax.interceptor.InterceptorBinding;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
 /**
- * Verify if the 'keyPath' informed through the the annotation is valid.
- * The validation process follows some rules. In the final of process, it's possible to be sure that the 'keyPath' informed is valid.
- * If the 'keyPath' informed broke any rule the validation throws the exception {@link ConfigPropertiesException} notifying the problem.
+ * Verifica se o 'value' informado através da anotação é válido.
+ * O processo de validação segue algumas regras. No final do processo, é possível ter certeza de que o 'value' informado é válido.
+ * Se o 'value' informado infringiu alguma regra, a validação lançará a exceção {@link ConfigPropertiesException} notificando o problema.
  * 
  * 
- * @author igor.ferreia
+ * @author igor.ferreira
  * 
  */
 @Inherited

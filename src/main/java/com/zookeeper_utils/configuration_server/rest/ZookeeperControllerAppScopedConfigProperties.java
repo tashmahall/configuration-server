@@ -36,7 +36,7 @@ public class ZookeeperControllerAppScopedConfigProperties implements Serializabl
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getParametersTree() throws ConfigPropertiesException, JsonProcessingException  {
-		Map<String,String> map=	zcInstance.get().getPropertiesMap();
+		Map<String,String> map=	zcInstance.get().getPropertiesMap(false);
 		zcInstance.destroy(zcInstance.get());
 		return JackJsonUtils.entityToJsonString(map);
 	}
@@ -47,7 +47,7 @@ public class ZookeeperControllerAppScopedConfigProperties implements Serializabl
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getInfo(@PathParam("key") String key) throws ConfigPropertiesException, JsonProcessingException  {
 		String realPath = StringUtils.join("/",key);
-		String keyValue = zcInstance.get().getPropertyValue(realPath);
+		String keyValue = zcInstance.get().getPropertyValue(realPath,false);
 		zcInstance.destroy(zcInstance.get());
 		return JackJsonUtils.createJsonLine(realPath, keyValue);
 	}

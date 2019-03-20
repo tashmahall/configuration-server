@@ -7,6 +7,9 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.servlet.ServletContext;
+
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,15 +23,15 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.zookeeper_utils.configuration_server.exceptions.ConfigPropertiesException;
-import com.zookeeper_utils.configuration_server.repositories.ZookeeperConfigurationLoaderZookeeperPropertiesFile;
-import com.zookeeper_utils.configuration_server.repositories.ZookeeperLoadConfiguration;
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(ZookeeperLoadConfiguration.class)
+@PrepareForTest(ZookeeperPropertiesFileLoadConfiguration.class)
 public class ZookeeperConfigurationLoaderZookeeperPropertiesFileTest {
 	@InjectMocks
 	private ZookeeperConfigurationLoaderZookeeperPropertiesFile sbv;
 	@Mock
 	private Properties properties;
+	@Mock
+	private ServletContext context;
 	
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -36,13 +39,13 @@ public class ZookeeperConfigurationLoaderZookeeperPropertiesFileTest {
 	@Before
 	public void load() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		mockStatic(ZookeeperLoadConfiguration.class);
+		mockStatic(ZookeeperPropertiesFileLoadConfiguration.class);
 
 	}
 	
 	@Test
 	public void testLoadHostAndPort() throws Exception {
-		when(ZookeeperLoadConfiguration.getProperties()).thenReturn(properties);
+		when(ZookeeperPropertiesFileLoadConfiguration.getProperties()).thenReturn(properties);
 		when(properties.getProperty(Mockito.eq("zookeeper.host"))).thenReturn("localhost");
 		when(properties.getProperty(Mockito.eq("zookeeper.port"))).thenReturn("2181");
 		String test = sbv.loadHostAndPort();
@@ -50,9 +53,32 @@ public class ZookeeperConfigurationLoaderZookeeperPropertiesFileTest {
 	}
 	@Test
 	public void testLoadHostAndPortException() throws Exception {
-		when(ZookeeperLoadConfiguration.getProperties()).thenThrow(IOException.class);
+		when(ZookeeperPropertiesFileLoadConfiguration.getProperties()).thenThrow(IOException.class);
         thrown.expect(ConfigPropertiesException.class);
         thrown.expectMessage("Error while trying to get the zookeeper properties in the file zookeeper.properties");
 		sbv.loadHostAndPort();
+	}
+	@Test
+	public void testGetContexName() {
+		String zookeeper = "zookeeper";
+		String $zookeeper = StringUtils.join("/",zookeeper);
+		when(context.getServletContextName()).thenReturn(zookeeper);
+		String test = sbv.getContextName();
+		assertEquals($zookeeper, test);
+	}
+	@Test
+	public void testGetGlobalContexName() throws ConfigPropertiesException, IOException {
+		String $ans = "/ans";
+		when(ZookeeperPropertiesFileLoadConfiguration.getProperties()).thenReturn(properties);
+		when(properties.getProperty(Mockito.eq("global.context.name"))).thenReturn($ans);
+		String test = sbv.getGlobalContextName();
+		assertEquals($ans, test);
+	}
+	@Test
+	public void testGetGlobalContexNameException() throws Exception {
+		when(ZookeeperPropertiesFileLoadConfiguration.getProperties()).thenThrow(IOException.class);
+        thrown.expect(ConfigPropertiesException.class);
+        thrown.expectMessage("Error while trying to get the zookeeper properties in the file zookeeper.properties");
+		sbv.getGlobalContextName();
 	}
 }

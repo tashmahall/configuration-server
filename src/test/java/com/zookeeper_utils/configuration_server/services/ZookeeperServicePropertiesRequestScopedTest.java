@@ -1,15 +1,14 @@
 package com.zookeeper_utils.configuration_server.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,31 +29,44 @@ public class ZookeeperServicePropertiesRequestScopedTest {
 	@Mock
 	private ZookeeperRepositoryInterface zc;
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+
 	
-	private Map<String,String> configurationMap ;
+	private Map<String,String> mapGlobal ;
+	
+	private Map<String,String> mapApp ;
 
 	
 	@Before
 	public void loadConfigurationMap() {
-		configurationMap = new TreeMap<String,String>();
-		configurationMap.put("/zookeeper/first1", null);
-		configurationMap.put("/zookeeper/first2","test /zookeeper/first2");
-		configurationMap.put("/zookeeper/first1/second1","test /zookeeper/first1/second1");
+		mapApp = new TreeMap<String,String>();
+		mapApp.put("/zookeeper/first2","test /zookeeper/first2");
+		mapGlobal = new TreeMap<String,String>();
+		mapGlobal.put("/ans/first2","test /ans/first2");
 	}
 	
 	@Test
-	public void getPropertyValueTest() throws ConfigPropertiesException {
-		when(zc.getValueFromKeyPath("/first2")).thenReturn("test /zookeeper/first2");
-		String teste = sbv.getPropertyValue("/first2");
+	public void getPropertyValueTestIsGlobalTrue() throws ConfigPropertiesException {
+		when(zc.getValueFromKeyPathGlobalContext(eq("/first2"))).thenReturn("test /ans/first2");
+		String teste = sbv.getPropertyValue("/first2",true);
+		assertEquals("test /ans/first2",teste);
+	}
+	@Test
+	public void getPropertyValueTestIsGlobalFalse() throws ConfigPropertiesException {
+		when(zc.getValueFromKeyPathApplicationContext(eq("/first2"))).thenReturn("test /zookeeper/first2");
+		String teste = sbv.getPropertyValue("/first2",false);
 		assertEquals("test /zookeeper/first2",teste);
 	}
 	@Test
-	public void getPropertiesMapTest() throws ConfigPropertiesException {
-		when(zc.getKeyPathTree()).thenReturn(configurationMap);
-		Map<String,String> teste = sbv.getPropertiesMap();
-		assertEquals(configurationMap,teste);
+	public void getPropertiesMapTestIsGlobalTrue() throws ConfigPropertiesException {
+		when(zc.getKeyPathTreeGlobalContext()).thenReturn(mapGlobal);
+		Map<String,String> teste = sbv.getPropertiesMap(true);
+		assertEquals(mapGlobal,teste);
+	}
+	@Test
+	public void getPropertiesMapTestIsGlobalFalse() throws ConfigPropertiesException {
+		when(zc.getKeyPathTreeApplicationContext()).thenReturn(mapApp);
+		Map<String,String> teste = sbv.getPropertiesMap(false);
+		assertEquals(mapApp,teste);
 	}
 }
 
